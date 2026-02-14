@@ -2,6 +2,7 @@ package parse
 
 import (
     "fmt"
+    "strconv"
 )
 
 %%{ 
@@ -27,26 +28,36 @@ func newLexer(data []byte) *lexer {
     return lex
 }
 
-/*
-class           return TOK_CLASS;
-[a-zA-Z]+       return IDENTIFIER;
-{               return TOK_BLOCK_OPEN;
-}               return TOK_BLOCK_CLOSE;
-;               return TOK_SEMICOLON;
-\n
-[ \t]+
-*/
-
 func (lex *lexer) Lex(out *yySymType) int {
     eof := lex.pe
     tok := 0
     %%{ 
         main := |*
+            '"' => { tok = TOK_QUOTE; fbreak; };
             'class' => { tok = TOK_CLASS; fbreak;};
             [a-zA-Z]+ => { out.identifier = string(lex.data[lex.ts:lex.te]); tok = IDENTIFIER; fbreak;};
+            [0-9]+'.'[0-9]+ => {
+              n, err := strconv.ParseFloat(string(lex.data[lex.ts:lex.te]), 64);
+              if err != nil {
+                panic(err)
+              }
+              out.float = n;
+              tok = FLOAT;
+              fbreak;
+            };
+            [0-9]+ => {
+              n, err := strconv.Atoi(string(lex.data[lex.ts:lex.te]));
+              if err != nil {
+                panic(err)
+              }
+              out.integer = n;
+              tok = INTEGER;
+              fbreak;
+            };
             '{' => { tok = TOK_BLOCK_OPEN; fbreak;};
             '}' => { tok = TOK_BLOCK_CLOSE; fbreak; };
             ';' => { tok = TOK_SEMICOLON; fbreak; };
+            '=' => { tok = TOK_ASSIGN; fbreak; };
             space;
         *|;
 

@@ -18,7 +18,7 @@ func Test_Parse_FloatValue(t *testing.T) {
 }
 
 func Test_Parse_StringValue(t *testing.T) {
-	e := parse.Parse([]byte(`stringValue = "text";`), true)
+	e := parse.Parse([]byte(`stringValue = "text with spaces";`), true)
 	require.Equal(t, 0, e)
 }
 

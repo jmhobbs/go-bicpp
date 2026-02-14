@@ -33,25 +33,37 @@ func (lex *lexer) Lex(out *yySymType) int {
     tok := 0
     %%{ 
         main := |*
-            '"' => { tok = TOK_QUOTE; fbreak; };
             'class' => { tok = TOK_CLASS; fbreak;};
             '[]' => { tok = TOK_ARRAY; fbreak;};
-            [a-zA-Z]+ => { out.identifier = string(lex.data[lex.ts:lex.te]); tok = IDENTIFIER; fbreak;};
+            '"'^'"'*?'"' => {
+              if lex.te - lex.ts > 2 {
+                out.stringValue = string(lex.data[lex.ts+1:lex.te-1]);
+              } else {
+                out.stringValue = "";
+              }
+              tok = STRING;
+              fbreak;
+            };
+            [a-zA-Z]+ => {
+              out.identifier = string(lex.data[lex.ts:lex.te]);
+              tok = IDENTIFIER;
+              fbreak;
+            };
             [0-9]+'.'[0-9]+ => {
               n, err := strconv.ParseFloat(string(lex.data[lex.ts:lex.te]), 64);
               if err != nil {
                 panic(err)
               }
-              out.float = n;
+              out.floatValue = n;
               tok = FLOAT;
               fbreak;
             };
-            [0-9]+ => {
+            digit+ => {
               n, err := strconv.Atoi(string(lex.data[lex.ts:lex.te]));
               if err != nil {
                 panic(err)
               }
-              out.integer = n;
+              out.integerValue = n;
               tok = INTEGER;
               fbreak;
             };

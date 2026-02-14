@@ -4,24 +4,26 @@ package parse
 import "fmt"
 %}
 
-%token IDENTIFIER INTEGER FLOAT
+%token IDENTIFIER INTEGER FLOAT STRING
 %token TOK_CLASS TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA
 
 %union{
   identifier string
-  integer int
-  float float64
-  stringVal string
+
+  integerValue int
+  floatValue float64
+  stringValue string
 
   anything any
   anythings []any
 }
 
 %token <identifier> IDENTIFIER
-%token <integer> INTEGER
-%token <float> FLOAT
 
-%type <stringVal> string
+%token <stringValue> STRING
+%token <integerValue> INTEGER
+%token <floatValue> FLOAT
+
 %type <anything>  value
 %type <anythings> array_values
 
@@ -63,14 +65,8 @@ float_declaration
   ;
 
 string_declaration
-  : IDENTIFIER TOK_ASSIGN string TOK_SEMICOLON {
+  : IDENTIFIER TOK_ASSIGN STRING TOK_SEMICOLON {
     fmt.Printf("!!! Variable declaration: %s = %s\n", $1, $3)
-  }
-  ;
-
-string
-  : TOK_QUOTE IDENTIFIER TOK_QUOTE {
-    $$ = $2
   }
   ;
 
@@ -81,7 +77,8 @@ value
   | FLOAT {
     $$ = $1
   }
-  | string {
+  | STRING {
+  fmt.Printf("!!! String value: %s\n", $1)
     $$ = $1
   }
   ;

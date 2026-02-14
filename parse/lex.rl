@@ -35,6 +35,7 @@ func (lex *lexer) Lex(out *yySymType) int {
         main := |*
             '"' => { tok = TOK_QUOTE; fbreak; };
             'class' => { tok = TOK_CLASS; fbreak;};
+            '[]' => { tok = TOK_ARRAY; fbreak;};
             [a-zA-Z]+ => { out.identifier = string(lex.data[lex.ts:lex.te]); tok = IDENTIFIER; fbreak;};
             [0-9]+'.'[0-9]+ => {
               n, err := strconv.ParseFloat(string(lex.data[lex.ts:lex.te]), 64);
@@ -54,6 +55,7 @@ func (lex *lexer) Lex(out *yySymType) int {
               tok = INTEGER;
               fbreak;
             };
+            ',' => { tok = TOK_COMMA; fbreak; };
             '{' => { tok = TOK_BLOCK_OPEN; fbreak;};
             '}' => { tok = TOK_BLOCK_CLOSE; fbreak; };
             ';' => { tok = TOK_SEMICOLON; fbreak; };

@@ -5,7 +5,7 @@ import "fmt"
 %}
 
 %token CLASS IDENTIFIER INTEGER FLOAT STRING
-%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON
+%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON TOK_DEFINE
 
 %union{
   identifier string
@@ -39,12 +39,19 @@ statements
   | statement
   ;
 
-statement:
-  class_declaration
+statement
+  : define
+  | class_declaration
   | integer_declaration
   | float_declaration
   | string_declaration
   | array_declaration
+  ;
+
+define
+  : TOK_DEFINE IDENTIFIER value {
+    fmt.Printf("!!! Define: %s = %v\n", $2, $3)
+  }
   ;
 
 class_declaration
@@ -85,7 +92,6 @@ value
     $$ = $1
   }
   | STRING {
-  fmt.Printf("!!! String value: %s\n", $1)
     $$ = $1
   }
   ;

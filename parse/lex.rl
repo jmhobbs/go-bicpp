@@ -26,6 +26,10 @@ func (lex *lexer) Lex(out *yySymType) int {
     tok := 0
     %%{ 
         main := |*
+            '#define' => {
+              tok = TOK_DEFINE;
+              fbreak;
+            };
             'class '[a-zA-Z0-9]+ => {
               tok = CLASS;
               out.identifier = string(lex.data[lex.ts+6:lex.te]);

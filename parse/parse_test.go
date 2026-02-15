@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func Test_Parse_Define(t *testing.T) {
+	require.NoError(t, parse.Parse([]byte(`#define true 0`), true))
+}
+
 func Test_Parse_Class(t *testing.T) {
 	require.NoError(t, parse.Parse([]byte(`class CfgModule;`), true))
 

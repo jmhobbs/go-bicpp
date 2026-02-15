@@ -7,7 +7,7 @@ func Parse(input []byte, debug bool) error {
 		yyErrorVerbose = true
 	}
 	lex := newLexer(input)
-	if 0 != yyParse(lex) {
+	if yyParse(lex) != 0 {
 		return lex.err
 	}
 	return nil

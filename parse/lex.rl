@@ -33,7 +33,11 @@ func (lex *lexer) Lex(out *yySymType) int {
     tok := 0
     %%{ 
         main := |*
-            'class' => { tok = TOK_CLASS; fbreak;};
+            'class '[a-zA-Z0-9]+ => {
+              tok = CLASS;
+              out.identifier = string(lex.data[lex.ts+6:lex.te]);
+              fbreak;
+            };
             '[]' => { tok = TOK_ARRAY; fbreak;};
             '"'^'"'*?'"' => {
               if lex.te - lex.ts > 2 {
@@ -67,11 +71,12 @@ func (lex *lexer) Lex(out *yySymType) int {
               tok = INTEGER;
               fbreak;
             };
+            '=' => { tok = TOK_ASSIGN; fbreak; };
             ',' => { tok = TOK_COMMA; fbreak; };
             '{' => { tok = TOK_BLOCK_OPEN; fbreak;};
             '}' => { tok = TOK_BLOCK_CLOSE; fbreak; };
+            ':' => { tok = TOK_COLON; fbreak; };
             ';' => { tok = TOK_SEMICOLON; fbreak; };
-            '=' => { tok = TOK_ASSIGN; fbreak; };
             space;
         *|;
 

@@ -4,8 +4,8 @@ package parse
 import "fmt"
 %}
 
-%token IDENTIFIER INTEGER FLOAT STRING
-%token TOK_CLASS TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA
+%token CLASS IDENTIFIER INTEGER FLOAT STRING
+%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON
 
 %union{
   identifier string
@@ -18,6 +18,7 @@ import "fmt"
   anythings []any
 }
 
+%token <identifier> CLASS
 %token <identifier> IDENTIFIER
 
 %token <stringValue> STRING
@@ -47,8 +48,14 @@ statement:
   ;
 
 class_declaration
-  : TOK_CLASS IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    fmt.Printf("!!! Class declaration: %s\n", $2)
+  : CLASS TOK_SEMICOLON {
+    fmt.Printf("!!! Forward class declaration: %s\n", $1)
+  }
+  | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
+    fmt.Printf("!!! Derived class declaration: %s from %s\n", $1, $3)
+  }
+  | CLASS TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
+    fmt.Printf("!!! Class declaration: %s\n", $1)
   }
   ;
 

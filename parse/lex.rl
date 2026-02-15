@@ -1,7 +1,6 @@
 package parse
 
 import (
-    "fmt"
     "strconv"
 )
 
@@ -12,12 +11,6 @@ import (
     variable p lex.p;
     variable pe lex.pe;
 }%%
-
-type lexer struct {
-    data []byte
-    p, pe, cs int
-    ts, te, act int
-}
 
 func newLexer(data []byte) *lexer {
     lex := &lexer{ 
@@ -84,8 +77,4 @@ func (lex *lexer) Lex(out *yySymType) int {
     }%%
 
     return tok;
-}
-
-func (lex *lexer) Error(e string) {
-    fmt.Println("error:", e)
 }

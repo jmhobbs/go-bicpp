@@ -8,32 +8,25 @@ import (
 )
 
 func Test_Parse_Class(t *testing.T) {
-	e := parse.Parse([]byte(`class CfgModule;`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`class CfgModule;`), true))
 
-	e = parse.Parse([]byte(`class CfgModule {};`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`class CfgModule {};`), true))
 
-	e = parse.Parse([]byte(`class CfgModule: CfgBase {};`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`class CfgModule: CfgBase {};`), true))
 }
 
 func Test_Parse_IntValue(t *testing.T) {
-	e := parse.Parse([]byte(`intValue = 42;`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`intValue = 42;`), true))
 }
 
 func Test_Parse_FloatValue(t *testing.T) {
-	e := parse.Parse([]byte(`floatValue = 42.0;`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`floatValue = 42.0;`), true))
 }
 
 func Test_Parse_StringValue(t *testing.T) {
-	e := parse.Parse([]byte(`stringValue = "text with spaces";`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`stringValue = "text with spaces";`), true))
 }
 
 func Test_Parse_ArrayValue(t *testing.T) {
-	e := parse.Parse([]byte(`arrValue[] = {1, 2.5, "string"};`), true)
-	require.Equal(t, 0, e)
+	require.NoError(t, parse.Parse([]byte(`arrValue[] = {1, 2.5, "string"};`), true))
 }

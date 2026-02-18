@@ -2,6 +2,7 @@
 package parse
 
 import "fmt"
+import "github.com/jmhobbs/go-bicpp/ast"
 %}
 
 %token CLASS IDENTIFIER INTEGER FLOAT STRING
@@ -14,8 +15,8 @@ import "fmt"
   floatValue float64
   stringValue string
 
-  anything any
-  anythings []any
+  value ast.Value
+  values ast.ArrayValue
 }
 
 %token <identifier> CLASS
@@ -25,8 +26,9 @@ import "fmt"
 %token <integerValue> INTEGER
 %token <floatValue> FLOAT
 
-%type <anything>  value
-%type <anythings> array_values
+%type <value> literal
+%type <value> value
+%type <values> array_values
 
 %%
 
@@ -40,17 +42,15 @@ statements
   ;
 
 statement
-  : define
+  : define_macro
   | class_declaration
-  | integer_declaration
-  | float_declaration
-  | string_declaration
+  | variable_declaration
   | array_declaration
   ;
 
-define
+define_macro
   : TOK_DEFINE IDENTIFIER value {
-    fmt.Printf("!!! Define: %s = %v\n", $2, $3)
+    program.Define($2, $3)
   }
   ;
 
@@ -66,48 +66,45 @@ class_declaration
   }
   ;
 
-integer_declaration
-  : IDENTIFIER TOK_ASSIGN INTEGER TOK_SEMICOLON {
-    fmt.Printf("!!! Variable declaration: %s = %d\n", $1, $3)
-  }
-  ;
-
-float_declaration
-  : IDENTIFIER TOK_ASSIGN FLOAT TOK_SEMICOLON {
-    fmt.Printf("!!! Variable declaration: %s = %f\n", $1, $3)
-  }
-  ;
-
-string_declaration
-  : IDENTIFIER TOK_ASSIGN STRING TOK_SEMICOLON {
-    fmt.Printf("!!! Variable declaration: %s = %s\n", $1, $3)
-  }
-  ;
-
-value
-  : INTEGER {
-    $$ = $1
-  }
-  | FLOAT {
-    $$ = $1
-  }
-  | STRING {
-    $$ = $1
-  }
-  ;
-
-array_values
-  : value {
-    $$ = []any{$1}
-  }
-  | array_values TOK_COMMA value {
-    $$ = append($$, $3)
+variable_declaration
+  : IDENTIFIER TOK_ASSIGN value TOK_SEMICOLON {
+    program.Declare($1, $3)
   }
   ;
 
 array_declaration:
   IDENTIFIER TOK_ARRAY TOK_ASSIGN TOK_BLOCK_OPEN array_values TOK_BLOCK_CLOSE TOK_SEMICOLON {
     fmt.Printf("!!! Array declaration: %v[] = %v\n", $1, $5)
+    program.Declare($1, $5)
+  }
+  ;
+
+literal
+  : INTEGER {
+    $$ = ast.IntegerValue($1)
+  }
+  | FLOAT {
+    $$ = ast.FloatValue($1)
+  }
+  | STRING {
+    $$ = ast.StringValue($1)
+  }
+  ;
+
+value
+  : IDENTIFIER {
+    $$ = ast.IdentifierValue($1)
+  }
+  | literal {
+    $$ = $1
+  }
+
+array_values
+  : value {
+    $$ = ast.ArrayValue{$1}
+  }
+  | array_values TOK_COMMA value {
+    $$ = append($$, $3)
   }
   ;
 

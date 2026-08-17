@@ -13,7 +13,7 @@ import (
 func Test_Parse_Define(t *testing.T) {
 	p, err := parse.Parse([]byte(`#define true 1`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Definitions["true"], ast.IntegerValue(1))
+	assert.Equal(t, p.Definitions[0], ast.Definition{Identifier: "true", Value: ast.IntegerValue(1)})
 }
 
 func Test_Parse_ForwardClass(t *testing.T) {
@@ -25,13 +25,41 @@ func Test_Parse_ForwardClass(t *testing.T) {
 func Test_Parse_Class(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule {};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Fields: []ast.VariableDeclaration{}}, p.Declarations[0])
+	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Fields: []ast.Declaration{}}, p.Declarations[0])
+}
+
+func Test_Parse_Nested_Class(t *testing.T) {
+	p, err := parse.Parse([]byte(`class CfgWhatever {
+	myVar = 420;
+	class CfgAnother {
+		scope = 2;
+		model = "\dz\path\to\thing.p3d";
+	};
+};
+`), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.ClassDeclaration{
+			Identifier: "CfgWhatever",
+			Fields: []ast.Declaration{
+				ast.VariableDeclaration{Identifier: "myVar", Value: ast.IntegerValue(420)},
+				ast.ClassDeclaration{
+					Identifier: "CfgAnother",
+					Fields: []ast.Declaration{
+						ast.VariableDeclaration{Identifier: "scope", Value: ast.IntegerValue(2)},
+						ast.VariableDeclaration{Identifier: "model", Value: ast.StringValue(`\dz\path\to\thing.p3d`)},
+					},
+				},
+			},
+		}, p.Declarations[0])
+
 }
 
 func Test_Parse_InheritedClass(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule: CfgBase {};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Parent: "CfgBase", Fields: []ast.VariableDeclaration{}}, p.Declarations[0])
+	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Parent: "CfgBase", Fields: []ast.Declaration{}}, p.Declarations[0])
 }
 
 func Test_Parse_IntValue(t *testing.T) {

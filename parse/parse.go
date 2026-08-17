@@ -7,7 +7,7 @@ var program ast.Program
 //go:generate go tool goyacc -o cpp.go cpp.y
 func Parse(input []byte, debug bool) (*ast.Program, error) {
 	program = ast.Program{
-		Definitions:  make(map[string]ast.Value),
+		Definitions:  []ast.Definition{},
 		Declarations: []ast.Declaration{},
 	}
 

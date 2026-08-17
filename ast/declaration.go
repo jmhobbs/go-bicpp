@@ -52,7 +52,7 @@ func (d ForwardClassDeclaration) String() string {
 type ClassDeclaration struct {
 	Identifier string
 	Parent     string
-	Fields     []VariableDeclaration
+	Fields     []Declaration
 }
 
 func (d ClassDeclaration) Kind() DeclarationKind {
@@ -68,7 +68,7 @@ func (d ClassDeclaration) String() string {
 	lines[1] = "{"
 	lines[len(lines)-1] = "}"
 	for i, f := range d.Fields {
-		lines[i+1] = f.String()
+		lines[i+2] = f.String()
 	}
 	return strings.Join(lines, "\n")
 }

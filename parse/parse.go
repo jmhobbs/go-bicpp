@@ -8,7 +8,7 @@ var program ast.Program
 func Parse(input []byte, debug bool) (*ast.Program, error) {
 	program = ast.Program{
 		Definitions:  make(map[string]ast.Value),
-		Declarations: make(map[string]ast.Declaration),
+		Declarations: []ast.Declaration{},
 	}
 
 	if debug {

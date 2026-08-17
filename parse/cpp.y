@@ -57,12 +57,15 @@ define_macro
 class_declaration
   : CLASS TOK_SEMICOLON {
     fmt.Printf("!!! Forward class declaration: %s\n", $1)
+    program.ForwardDeclareClass($1)
   }
   | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
     fmt.Printf("!!! Derived class declaration: %s from %s\n", $1, $3)
+    program.DeclareClass($1, $3)
   }
   | CLASS TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
     fmt.Printf("!!! Class declaration: %s\n", $1)
+    program.DeclareClass($1, "")
   }
   ;
 

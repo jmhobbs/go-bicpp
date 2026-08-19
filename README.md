@@ -1,6 +1,69 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/jmhobbs/go-bicpp.svg)](https://pkg.go.dev/github.com/jmhobbs/go-bicpp)
+[![Lint & Test](https://github.com/jmhobbs/go-bicpp/actions/workflows/lint-and-test.yml/badge.svg)](https://github.com/jmhobbs/go-bicpp/actions/workflows/lint-and-test.yml)
+[![codecov](https://codecov.io/github/jmhobbs/go-bicpp/graph/badge.svg?token=F6SSXORv3k)](https://codecov.io/github/jmhobbs/go-bicpp)
+
 # go-bicpp
 
 A module to parse and generate `.cpp` files used by Bohemia Interactive.
+
+## Usage
+
+```go
+package main
+
+import (
+        "fmt"
+
+        "github.com/jmhobbs/go-bicpp/parse"
+)
+
+func main() {
+        pgm, err := parse.Parse([]byte(`
+#define true 0
+class CfgVehicles;
+class CfgPatches {};
+class CfgPatches : CfgVehicles {};
+intVal = 42;
+strVal = "text with spaces";
+arrVal[] = {1,2};
+mixedArr[] = {1, 2.0, "text"};
+class CfgWhatever {
+        myVar = 420;
+        class CfgAnother {
+                scope = 2;
+                model = "\dz\path\to\thing.p3d"
+        }
+};
+`), false)
+        if err != nil {
+                panic(err)
+        }
+
+        // pgm now has the parsed representation of the .cpp file
+
+        // a default printer is provided (it's not very good)
+        fmt.Println(pgm.String())
+}
+```
+
+
+### Pretty Errors
+
+The parser is strict. When things go awry, it will return an error, which has can print a "pretty" version;
+
+```
+panic: parsing error at line 15, column 2
+
+        10 | class CfgWhatever {
+        11 |    myVar = 420;
+        12 |    class CfgAnother {
+        13 |            scope = 2;
+        14 |            model = "\dz\path\to\thing.p3d"
+        15 |    }
+        !! |    `-- syntax error: unexpected "}", expecting ";"
+        16 | };
+        17 |
+```
 
 ## Links
 

@@ -30,8 +30,13 @@ func Test_Stringers(t *testing.T) {
 		},
 		{
 			Name:     "Float",
-			Value:    ast.FloatValue(3.14),
-			Expected: "3.14",
+			Value:    ast.FloatValue(3.9),
+			Expected: "3.9",
+		},
+		{
+			Name:     "Float must have one zero",
+			Value:    ast.FloatValue(3.0),
+			Expected: "3.0",
 		},
 		{
 			Name: "Array",

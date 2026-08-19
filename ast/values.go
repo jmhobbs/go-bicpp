@@ -83,7 +83,11 @@ func (l FloatValue) Value() float64 {
 }
 
 func (l FloatValue) String() string {
-	return strings.TrimRight(fmt.Sprintf("%0.2f", float64(l)), "0")
+	s := strings.TrimRight(fmt.Sprintf("%0.2f", float64(l)), "0")
+	if strings.HasSuffix(s, ".") {
+		return s + "0"
+	}
+	return s
 }
 
 ////////////////////////////////////////////////////////////////

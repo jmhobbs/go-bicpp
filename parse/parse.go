@@ -11,9 +11,9 @@ func Parse(input []byte, debug bool) (*ast.Program, error) {
 		Declarations: []ast.Declaration{},
 	}
 
+	yyErrorVerbose = true
 	if debug {
 		yyDebug = 5
-		yyErrorVerbose = true
 	}
 	lex := newLexer(input)
 	if yyParse(lex) != 0 {

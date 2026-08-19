@@ -62,6 +62,19 @@ func Test_Parse_InheritedClass(t *testing.T) {
 	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Parent: "CfgBase", Fields: []ast.Declaration{}}, p.Declarations[0])
 }
 
+func Test_Parse_ErrorLocation(t *testing.T) {
+	_, err := parse.Parse([]byte(`
+class CfgOuter {
+	myVar = 420;
+	class CfgInner {
+		scope = 2;
+	}
+};
+`), false)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "line 7, column 1")
+}
+
 func Test_Parse_IntValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`intValue = 42;`), true)
 	require.NoError(t, err)

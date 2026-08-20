@@ -26,8 +26,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %token <floatValue> FLOAT
 
 %type <node> literal
-%type <node> value
-%type <nodes> array_values
+%type <nodes> array_values array
 
 %type <node> define_macro
 %type <nodes> directives
@@ -78,8 +77,11 @@ declaration
   ;
 
 define_macro
-  : TOK_DEFINE IDENTIFIER value {
+  : TOK_DEFINE IDENTIFIER literal {
     $$ = ast.Define{Identifier: $2, Value: $3}
+  }
+  | TOK_DEFINE IDENTIFIER array {
+    $$ = ast.Define{Identifier: $2, Value: ast.Array($3)}
   }
   ;
 
@@ -116,7 +118,7 @@ class_declaration
   ;
 
 variable_declaration
-  : IDENTIFIER TOK_ASSIGN value TOK_SEMICOLON  {
+  : IDENTIFIER TOK_ASSIGN literal TOK_SEMICOLON  {
     $$ =  ast.Assignment{
       Identifier: $1,
       Value: $3,
@@ -125,12 +127,10 @@ variable_declaration
   ;
 
 array_declaration:
-  IDENTIFIER TOK_ARRAY TOK_ASSIGN TOK_BLOCK_OPEN array_values TOK_BLOCK_CLOSE TOK_SEMICOLON {
+  IDENTIFIER TOK_ARRAY TOK_ASSIGN array TOK_SEMICOLON {
     $$ =  ast.Assignment{
       Identifier: $1,
-      Value: ast.Array{
-        Body: ast.ArrayBlock($5),
-      },
+      Value: ast.Array($4),
     }
   }
   ;
@@ -142,7 +142,10 @@ comment_declaration
   ;
 
 literal
-  : INTEGER {
+  : IDENTIFIER {
+    $$ = ast.Identifier($1)
+  }
+  | INTEGER {
     $$ = ast.Integer($1)
   }
   | FLOAT {
@@ -153,19 +156,27 @@ literal
   }
   ;
 
-value
-  : IDENTIFIER {
-    $$ = ast.Identifier($1)
+array
+  : TOK_BLOCK_OPEN array_values TOK_BLOCK_CLOSE {
+    $$ = ast.Array($2)
   }
-  | literal
+  | TOK_BLOCK_OPEN TOK_BLOCK_CLOSE {
+    $$ = ast.Array{}
+  }
   ;
 
 array_values
-  : value {
+  : literal {
     $$ = []ast.Node{$1}
   }
-  | array_values TOK_COMMA value {
+  | array {
+    $$ = $1
+  }
+  | array_values TOK_COMMA literal {
     $$ = append($$, $3)
+  }
+  | array_values TOK_COMMA array {
+    $$ = append($$, ast.Array($3))
   }
   ;
 

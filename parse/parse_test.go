@@ -114,11 +114,9 @@ func Test_Parse_ArrayValue(t *testing.T) {
 	assert.Equal(t, p.Declarations[0], ast.Assignment{
 		Identifier: "arrValue",
 		Value: ast.Array{
-			Body: ast.ArrayBlock{
-				ast.Integer(1),
-				ast.Float(2.5),
-				ast.String("string"),
-			},
+			ast.Integer(1),
+			ast.Float(2.5),
+			ast.String("string"),
 		},
 	})
 }

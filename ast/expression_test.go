@@ -24,13 +24,11 @@ func Test_Block_Empty_String(t *testing.T) {
 }
 
 func Test_ArrayBlock_String(t *testing.T) {
-	a := ast.ArrayBlock{
+	a := ast.Array{
 		ast.Integer(42),
 		ast.Float(3.14),
 		ast.Array{
-			Body: ast.ArrayBlock{
-				ast.String("nested"),
-			},
+			ast.String("nested"),
 		},
 		ast.String("hello"),
 	}

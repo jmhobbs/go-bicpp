@@ -13,13 +13,3 @@ func (b Block) String() string {
 	}
 	return strings.Join(lines, "\n")
 }
-
-type ArrayBlock []Node
-
-func (a ArrayBlock) String() string {
-	values := make([]string, len(a))
-	for i, value := range a {
-		values[i] = value.String()
-	}
-	return "{" + strings.Join(values, ", ") + "}"
-}

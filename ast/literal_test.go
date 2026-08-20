@@ -41,12 +41,10 @@ func Test_Stringers(t *testing.T) {
 		{
 			Name: "Array",
 			Value: ast.Array{
-				Body: ast.ArrayBlock{
-					ast.Identifier("myVar"),
-					ast.Integer(1),
-					ast.Float(2.5),
-					ast.String("string"),
-				},
+				ast.Identifier("myVar"),
+				ast.Integer(1),
+				ast.Float(2.5),
+				ast.String("string"),
 			},
 			Expected: `{myVar, 1, 2.5, "string"}`,
 		},

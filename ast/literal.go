@@ -5,8 +5,7 @@ import (
 	"strings"
 )
 
-////////////////////////////////////////////////////////////////
-
+// Identifier is a string representing an identifier.
 type Identifier string
 
 func (l Identifier) Value() string {
@@ -19,6 +18,7 @@ func (l Identifier) String() string {
 
 ////////////////////////////////////////////////////////////////
 
+// String represents a string literal value.
 type String string
 
 func (l String) Value() string {
@@ -31,6 +31,7 @@ func (l String) String() string {
 
 ////////////////////////////////////////////////////////////////
 
+// Integer represents an integer literal value.
 type Integer int
 
 func (l Integer) Value() int {
@@ -43,6 +44,7 @@ func (l Integer) String() string {
 
 ////////////////////////////////////////////////////////////////
 
+// Float represents a float literal value.
 type Float float64
 
 func (l Float) Value() float64 {
@@ -59,10 +61,12 @@ func (l Float) String() string {
 
 ////////////////////////////////////////////////////////////////
 
-type Array struct {
-	Body ArrayBlock
-}
+type Array []Node
 
 func (a Array) String() string {
-	return a.Body.String()
+	values := make([]string, len(a))
+	for i, value := range a {
+		values[i] = value.String()
+	}
+	return "{" + strings.Join(values, ", ") + "}"
 }

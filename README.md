@@ -12,13 +12,14 @@ A module to parse and generate `.cpp` files used by Bohemia Interactive.
 package main
 
 import (
-        "fmt"
+  "fmt"
 
-        "github.com/jmhobbs/go-bicpp/parse"
+  "github.com/jmhobbs/go-bicpp"
+  "github.com/jmhobbs/go-bicpp/printer"
 )
 
 func main() {
-        pgm, err := parse.Parse([]byte(`
+  file := []byte(`
 #define true 0
 class CfgVehicles;
 class CfgPatches {};
@@ -34,15 +35,28 @@ class CfgWhatever {
                 model = "\dz\path\to\thing.p3d"
         }
 };
-`), false)
-        if err != nil {
-                panic(err)
-        }
+`)
 
-        // pgm now has the parsed representation of the .cpp file
+  // cpp now has the parsed representation of the .cpp file
+  cpp, err := bicpp.Parse(file)
+  if err != nil {
+    // syntax errors will be of type parse.ParseError, which has a
+    // added context. The Error() function prints a "pretty" version
+    // of the error
+      panic(err)
+    }
 
-        // a default printer is provided (it's not very good)
-        fmt.Println(pgm.String())
+
+    // String() will do simple output
+    fmt.Println(pgm.String())
+
+    // the printer package does better, and has some options
+    p := printer.New(
+      printer.WithCondenseEmptyClassBodies(false),
+    )
+    if err := p.Write(os.Stdout, cpp); err != nil {
+      panic(err)
+    }
 }
 ```
 

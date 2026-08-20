@@ -1,3 +1,7 @@
+// Package bicpp provides an entry point for parsing Bohemia Interactive .cpp files.
+//
+// The parser here is based on the docs at https://community.bistudio.com/wiki/CPP_File_Format
+// as well as real .cpp files seen "in the wild" of DayZ.
 package bicpp
 
 import (

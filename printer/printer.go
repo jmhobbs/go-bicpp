@@ -1,3 +1,4 @@
+// The printer package provides a simple way to print parsed cpp AST's back into text.
 package printer
 
 import (
@@ -16,12 +17,22 @@ type Printer struct {
 	condenseEmptyClassBodies bool
 }
 
+// WithIndent sets the indent character(s) to use when printing the AST. The default is two spaces.
 func WithIndent(indent string) PrinterOption {
 	return func(p *Printer) {
 		p.indent = indent
 	}
 }
 
+// WithCondenseEmptyClassBodies sets whether to condense empty class bodies into a single line. The default is true.
+//
+//	// true
+//	class MyClass {};
+//
+//	// false
+//	class MyClass
+//	{
+//	};
 func WithCondenseEmptyClassBodies(condense bool) PrinterOption {
 	return func(p *Printer) {
 		p.condenseEmptyClassBodies = condense
@@ -36,6 +47,7 @@ func New(opts ...PrinterOption) *Printer {
 	return p
 }
 
+// Write prints the given AST file to the given [io.Writer]. It returns an error if any occurs during writing.
 func (p *Printer) Write(out io.Writer, file *ast.File) error {
 	var err error
 	for _, directive := range file.Directives {

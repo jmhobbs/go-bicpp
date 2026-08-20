@@ -2,6 +2,7 @@ package ast
 
 import "strings"
 
+// Block is a collection of nodes that represent the body of a class or other block-level construct.
 type Block []Node
 
 func (b Block) String() string {

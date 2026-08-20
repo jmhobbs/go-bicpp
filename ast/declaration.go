@@ -4,6 +4,10 @@ import (
 	"strings"
 )
 
+// Assignment represents a variable/field assignment using the `=` operator.
+//
+//	// example
+//	myVar = 1234;
 type Assignment struct {
 	Identifier string
 	Value      Node
@@ -15,21 +19,38 @@ func (d Assignment) String() string {
 
 ////////////////////////////////////////////////////////////////
 
+// Class represents a class definition.
 type Class struct {
 	Identifier string
 	Parent     string
 	Body       Block
 }
 
-func (d Class) String() string {
+// IsForwardClassDeclaration returns true if the class is a forward declaration with no body.
+//
+//	// example
+//	class CfgBase;
+func (c Class) IsForwardClassDeclaration() bool {
+	return c.Body == nil
+}
+
+// HasAncestor returns true if the class has a parent class.
+//
+//	// example
+//	class CfgChild : CfgParent { ... };
+func (c Class) HasAncestor() bool {
+	return c.Parent != ""
+}
+
+func (c Class) String() string {
 	var builder strings.Builder
-	builder.WriteString("class " + d.Identifier)
-	if d.Parent != "" {
-		builder.WriteString(" : " + d.Parent)
+	builder.WriteString("class " + c.Identifier)
+	if c.HasAncestor() {
+		builder.WriteString(" : " + c.Parent)
 	}
-	if d.Body != nil {
+	if !c.IsForwardClassDeclaration() {
 		builder.WriteString("\n")
-		builder.WriteString(d.Body.String())
+		builder.WriteString(c.Body.String())
 	}
 	builder.WriteString(";")
 	return builder.String()

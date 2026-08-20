@@ -2,10 +2,12 @@ package ast
 
 import "strings"
 
+// Node is an interface that represents a node in the AST.
 type Node interface {
 	String() string
 }
 
+// File is the root node of the AST, representing a complete configuration file.
 type File struct {
 	Directives   []Node
 	Declarations []Node

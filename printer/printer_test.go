@@ -11,20 +11,16 @@ import (
 	"github.com/jmhobbs/go-bicpp/printer"
 )
 
-var testFile = &ast.File{
-	Directives: []ast.Node{
-		ast.Define{Identifier: "true", Value: ast.Integer(1)},
+var testFile = ast.File{
+	ast.Define{Identifier: "true", Value: ast.Integer(1)},
+	ast.Class{
+		Identifier: "CfgEmpty",
+		Body:       ast.Block{},
 	},
-	Declarations: []ast.Node{
-		ast.Class{
-			Identifier: "CfgEmpty",
-			Body:       ast.Block{},
-		},
-		ast.Class{
-			Identifier: "CfgTest",
-			Body: ast.Block{
-				ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
-			},
+	ast.Class{
+		Identifier: "CfgTest",
+		Body: ast.Block{
+			ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
 		},
 	},
 }
@@ -42,6 +38,21 @@ class CfgTest
 {
   myVar = 420;
 };
+`, buf.String())
+}
+
+func Test_Printer_MovesDefinesToTop(t *testing.T) {
+	var buf bytes.Buffer
+
+	p := printer.New()
+	err := p.Write(&buf, ast.File{
+		ast.Class{Identifier: "CfgTest"},
+		ast.Define{Identifier: "true", Value: ast.Integer(1)},
+	})
+	require.NoError(t, err)
+	assert.Equal(t, `#define true 1
+
+class CfgTest;
 `, buf.String())
 }
 

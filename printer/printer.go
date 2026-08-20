@@ -48,22 +48,34 @@ func New(opts ...PrinterOption) *Printer {
 }
 
 // Write prints the given AST file to the given [io.Writer]. It returns an error if any occurs during writing.
-func (p *Printer) Write(out io.Writer, file *ast.File) error {
+func (p *Printer) Write(out io.Writer, file ast.File) error {
 	var err error
-	for _, directive := range file.Directives {
+
+	var foundDirectives bool
+	for _, ent := range file {
+		directive, ok := ent.(ast.Define)
+		if !ok {
+			continue
+		}
+		foundDirectives = true
 		if _, err = out.Write([]byte(directive.String() + "\n")); err != nil {
 			return err
 		}
 	}
+
 	// add a newline between directives and the body of the file
-	if len(file.Directives) > 0 {
+	if foundDirectives {
 		if _, err = out.Write([]byte{'\n'}); err != nil {
 			return err
 		}
 	}
 
-	for _, declaration := range file.Declarations {
-		if err = p.writeDeclaration(0, out, declaration); err != nil {
+	for _, ent := range file {
+		_, ok := ent.(ast.Define)
+		if ok {
+			continue
+		}
+		if err = p.writeDeclaration(0, out, ent); err != nil {
 			return err
 		}
 	}

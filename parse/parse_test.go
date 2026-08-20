@@ -40,52 +40,48 @@ class CfgAnother {
 	t.Log(f.String())
 	assert.Equal(
 		t,
-		&ast.File{
-			Directives: []ast.Node{
-				ast.Define{Identifier: "true", Value: ast.Integer(1)},
-				ast.Define{Identifier: "name", Value: ast.String("CfgModule")},
-				ast.Define{Identifier: "value", Value: ast.Float(42.01)},
-				ast.Define{
-					Identifier: "arr",
-					Value: ast.Array{
-						ast.Integer(1),
-						ast.String("two"),
-						ast.Float(3.01),
-					},
+		ast.File{
+			ast.Define{Identifier: "true", Value: ast.Integer(1)},
+			ast.Define{Identifier: "name", Value: ast.String("CfgModule")},
+			ast.Define{Identifier: "value", Value: ast.Float(42.01)},
+			ast.Define{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.Integer(1),
+					ast.String("two"),
+					ast.Float(3.01),
 				},
 			},
-			Declarations: []ast.Node{
-				ast.Class{Identifier: "CfgBase"},
-				ast.Class{
-					Identifier: "CfgModule",
-					Parent:     "CfgBase",
-					Body: ast.Block{
-						ast.Assignment{Identifier: "scope", Value: ast.Integer(2)},
-						ast.Assignment{Identifier: "model", Value: ast.String(`\dz\path\to\thing.p3d`)},
-						ast.Assignment{Identifier: "emptyArray", Value: ast.Array{}},
-						ast.Assignment{
-							Identifier: "nestedArray",
-							Value: ast.Array{
-								ast.Integer(1),
-								ast.Array{
-									ast.Integer(2),
-									ast.Integer(3),
-								},
-								ast.Integer(4),
+			ast.Class{Identifier: "CfgBase"},
+			ast.Class{
+				Identifier: "CfgModule",
+				Parent:     "CfgBase",
+				Body: ast.Block{
+					ast.Assignment{Identifier: "scope", Value: ast.Integer(2)},
+					ast.Assignment{Identifier: "model", Value: ast.String(`\dz\path\to\thing.p3d`)},
+					ast.Assignment{Identifier: "emptyArray", Value: ast.Array{}},
+					ast.Assignment{
+						Identifier: "nestedArray",
+						Value: ast.Array{
+							ast.Integer(1),
+							ast.Array{
+								ast.Integer(2),
+								ast.Integer(3),
 							},
+							ast.Integer(4),
 						},
 					},
 				},
-				ast.Comment(" this is a nested class"),
-				ast.Class{
-					Identifier: "CfgAnother",
-					Body: ast.Block{
-						ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
-						ast.Class{
-							Identifier: "CfgInner",
-							Body: ast.Block{
-								ast.Assignment{Identifier: "scope", Value: ast.Integer(2)},
-							},
+			},
+			ast.Comment(" this is a nested class"),
+			ast.Class{
+				Identifier: "CfgAnother",
+				Body: ast.Block{
+					ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
+					ast.Class{
+						Identifier: "CfgInner",
+						Body: ast.Block{
+							ast.Assignment{Identifier: "scope", Value: ast.Integer(2)},
 						},
 					},
 				},
@@ -98,13 +94,13 @@ class CfgAnother {
 func Test_Parse_Define(t *testing.T) {
 	p, err := parse.Parse([]byte(`#define true 1`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Directives[0], ast.Define{Identifier: "true", Value: ast.Integer(1)})
+	assert.Equal(t, p[0], ast.Define{Identifier: "true", Value: ast.Integer(1)})
 }
 
 func Test_Parse_ForwardClass(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.Class{Identifier: "CfgModule"}, p.Declarations[0])
+	assert.Equal(t, ast.Class{Identifier: "CfgModule"}, p[0])
 }
 
 func Test_Parse_Class(t *testing.T) {
@@ -116,7 +112,7 @@ func Test_Parse_Class(t *testing.T) {
 			Identifier: "CfgModule",
 			Body:       ast.Block{},
 		},
-		p.Declarations[0],
+		p[0],
 	)
 }
 
@@ -144,7 +140,7 @@ func Test_Parse_Nested_Class(t *testing.T) {
 					},
 				},
 			},
-		}, p.Declarations[0])
+		}, p[0])
 
 }
 
@@ -158,7 +154,7 @@ func Test_Parse_InheritedClass(t *testing.T) {
 			Parent:     "CfgBase",
 			Body:       ast.Block{},
 		},
-		p.Declarations[0],
+		p[0],
 	)
 }
 
@@ -178,25 +174,25 @@ class CfgOuter {
 func Test_Parse_IntValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`intValue = 42;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "intValue", Value: ast.Integer(42)})
+	assert.Equal(t, p[0], ast.Assignment{Identifier: "intValue", Value: ast.Integer(42)})
 }
 
 func Test_Parse_FloatValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`floatValue = 42.0;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "floatValue", Value: ast.Float(42.0)})
+	assert.Equal(t, p[0], ast.Assignment{Identifier: "floatValue", Value: ast.Float(42.0)})
 }
 
 func Test_Parse_StringValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`stringValue = "text with spaces";`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "stringValue", Value: ast.String("text with spaces")})
+	assert.Equal(t, p[0], ast.Assignment{Identifier: "stringValue", Value: ast.String("text with spaces")})
 }
 
 func Test_Parse_ArrayValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`arrValue[] = {1, 2.5, "string"};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.Assignment{
+	assert.Equal(t, p[0], ast.Assignment{
 		Identifier: "arrValue",
 		Value: ast.Array{
 			ast.Integer(1),
@@ -215,12 +211,9 @@ notThis = "though";
 	require.NoError(t, err)
 	assert.Equal(
 		t,
-		&ast.File{
-			Directives: []ast.Node{},
-			Declarations: []ast.Node{
-				ast.Comment(" this is a comment"),
-				ast.Assignment{Identifier: "notThis", Value: ast.String("though")},
-			},
+		ast.File{
+			ast.Comment(" this is a comment"),
+			ast.Assignment{Identifier: "notThis", Value: ast.String("though")},
 		},
 		p,
 	)
@@ -229,5 +222,5 @@ notThis = "though";
 func Test_Parse_Comment_Empty(t *testing.T) {
 	p, err := parse.Parse([]byte(`//`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.Comment(""), p.Declarations[0])
+	assert.Equal(t, ast.Comment(""), p[0])
 }

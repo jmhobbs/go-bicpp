@@ -8,21 +8,13 @@ type Node interface {
 }
 
 // File is the root node of the AST, representing a complete configuration file.
-type File struct {
-	Directives   []Node
-	Declarations []Node
-}
+type File []Node
 
-func (f *File) String() string {
+func (f File) String() string {
 	var builder strings.Builder
 
-	for _, d := range f.Directives {
-		builder.WriteString(d.String())
-		builder.WriteString("\n")
-	}
-
-	for _, d := range f.Declarations {
-		builder.WriteString(d.String())
+	for _, n := range f {
+		builder.WriteString(n.String())
 		builder.WriteString("\n")
 	}
 

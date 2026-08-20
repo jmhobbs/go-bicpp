@@ -40,14 +40,13 @@ import "github.com/jmhobbs/go-bicpp/ast"
 
 file
   : directives {
-    file.Directives = $1
+    file = $1
   }
   | directives declarations {
-    file.Directives = $1
-    file.Declarations = $2
+    file = append($1, $2...)
   }
   | declarations {
-    file.Declarations = $1
+    file = $1
   }
   ;
 

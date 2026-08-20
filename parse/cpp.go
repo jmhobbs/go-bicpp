@@ -65,7 +65,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line cpp.y:183
+//line cpp.y:182
 
 //line yacctab:1
 var yyExca = [...]int8{
@@ -490,66 +490,65 @@ yydefault:
 		yyDollar = yyS[yypt-1 : yypt+1]
 //line cpp.y:42
 		{
-			file.Directives = yyDollar[1].nodes
+			file = yyDollar[1].nodes
 		}
 	case 2:
 		yyDollar = yyS[yypt-2 : yypt+1]
 //line cpp.y:45
 		{
-			file.Directives = yyDollar[1].nodes
-			file.Declarations = yyDollar[2].nodes
+			file = append(yyDollar[1].nodes, yyDollar[2].nodes...)
 		}
 	case 3:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:49
+//line cpp.y:48
 		{
-			file.Declarations = yyDollar[1].nodes
+			file = yyDollar[1].nodes
 		}
 	case 4:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:55
+//line cpp.y:54
 		{
 			yyVAL.nodes = append(yyDollar[1].nodes, yyDollar[2].node)
 		}
 	case 5:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:58
+//line cpp.y:57
 		{
 			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 6:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:64
+//line cpp.y:63
 		{
 			yyVAL.nodes = append(yyDollar[1].nodes, yyDollar[2].node)
 		}
 	case 7:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:67
+//line cpp.y:66
 		{
 			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 12:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:80
+//line cpp.y:79
 		{
 			yyVAL.node = ast.Define{Identifier: yyDollar[2].identifier, Value: yyDollar[3].node}
 		}
 	case 13:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:83
+//line cpp.y:82
 		{
 			yyVAL.node = ast.Define{Identifier: yyDollar[2].identifier, Value: ast.Array(yyDollar[3].nodes)}
 		}
 	case 14:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:89
+//line cpp.y:88
 		{
 			yyVAL.node = ast.Class{Identifier: yyDollar[1].identifier}
 		}
 	case 15:
 		yyDollar = yyS[yypt-7 : yypt+1]
-//line cpp.y:92
+//line cpp.y:91
 		{
 			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
@@ -559,7 +558,7 @@ yydefault:
 		}
 	case 16:
 		yyDollar = yyS[yypt-6 : yypt+1]
-//line cpp.y:99
+//line cpp.y:98
 		{
 			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
@@ -569,7 +568,7 @@ yydefault:
 		}
 	case 17:
 		yyDollar = yyS[yypt-5 : yypt+1]
-//line cpp.y:106
+//line cpp.y:105
 		{
 			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
@@ -578,7 +577,7 @@ yydefault:
 		}
 	case 18:
 		yyDollar = yyS[yypt-4 : yypt+1]
-//line cpp.y:112
+//line cpp.y:111
 		{
 			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
@@ -587,7 +586,7 @@ yydefault:
 		}
 	case 19:
 		yyDollar = yyS[yypt-4 : yypt+1]
-//line cpp.y:121
+//line cpp.y:120
 		{
 			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
@@ -596,7 +595,7 @@ yydefault:
 		}
 	case 20:
 		yyDollar = yyS[yypt-5 : yypt+1]
-//line cpp.y:130
+//line cpp.y:129
 		{
 			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
@@ -605,67 +604,67 @@ yydefault:
 		}
 	case 21:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:139
+//line cpp.y:138
 		{
 			yyVAL.node = ast.Comment(yyDollar[1].stringValue)
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:145
+//line cpp.y:144
 		{
 			yyVAL.node = ast.Identifier(yyDollar[1].identifier)
 		}
 	case 23:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:148
+//line cpp.y:147
 		{
 			yyVAL.node = ast.Integer(yyDollar[1].integerValue)
 		}
 	case 24:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:151
+//line cpp.y:150
 		{
 			yyVAL.node = ast.Float(yyDollar[1].floatValue)
 		}
 	case 25:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:154
+//line cpp.y:153
 		{
 			yyVAL.node = ast.String(yyDollar[1].stringValue)
 		}
 	case 26:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:160
+//line cpp.y:159
 		{
 			yyVAL.nodes = ast.Array(yyDollar[2].nodes)
 		}
 	case 27:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:163
+//line cpp.y:162
 		{
 			yyVAL.nodes = ast.Array{}
 		}
 	case 28:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:169
+//line cpp.y:168
 		{
 			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 29:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:172
+//line cpp.y:171
 		{
 			yyVAL.nodes = yyDollar[1].nodes
 		}
 	case 30:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:175
+//line cpp.y:174
 		{
 			yyVAL.nodes = append(yyVAL.nodes, yyDollar[3].node)
 		}
 	case 31:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:178
+//line cpp.y:177
 		{
 			yyVAL.nodes = append(yyVAL.nodes, ast.Array(yyDollar[3].nodes))
 		}

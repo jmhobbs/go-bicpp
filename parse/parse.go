@@ -6,11 +6,8 @@ var file ast.File
 
 //go:generate go tool goyacc -o cpp.go cpp.y
 //go:generate gofmt -w cpp.go
-func Parse(input []byte, debug bool) (*ast.File, error) {
-	file = ast.File{
-		Directives:   []ast.Node{},
-		Declarations: []ast.Node{},
-	}
+func Parse(input []byte, debug bool) (ast.File, error) {
+	file = ast.File{}
 
 	yyErrorVerbose = true
 	if debug {
@@ -20,5 +17,5 @@ func Parse(input []byte, debug bool) (*ast.File, error) {
 	if yyParse(lex) != 0 {
 		return nil, lex.err
 	}
-	return &file, nil
+	return file, nil
 }

@@ -5,84 +5,51 @@ import (
 	"strings"
 )
 
-type Literal interface {
-	Kind() LiteralKind
-	String() string
-}
-
 ////////////////////////////////////////////////////////////////
 
-type LiteralKind uint8
+type Identifier string
 
-const (
-	IntegerLiteralKind LiteralKind = iota
-	FloatLiteralKind
-	StringLiteralKind
-	ArrayLiteralKind
-	IdentifierLiteralKind
-)
-
-////////////////////////////////////////////////////////////////
-
-type IdentifierLiteral string
-
-func (l IdentifierLiteral) Kind() LiteralKind {
-	return IdentifierLiteralKind
-}
-
-func (l IdentifierLiteral) Value() string {
+func (l Identifier) Value() string {
 	return string(l)
 }
 
-func (l IdentifierLiteral) String() string {
+func (l Identifier) String() string {
 	return string(l)
 }
 
 ////////////////////////////////////////////////////////////////
 
-type StringLiteral string
+type String string
 
-func (l StringLiteral) Kind() LiteralKind {
-	return StringLiteralKind
-}
-
-func (l StringLiteral) Value() string {
+func (l String) Value() string {
 	return string(l)
 }
 
-func (l StringLiteral) String() string {
+func (l String) String() string {
 	return fmt.Sprintf("%q", string(l))
 }
 
 ////////////////////////////////////////////////////////////////
 
-type IntegerLiteral int
+type Integer int
 
-func (l IntegerLiteral) Kind() LiteralKind {
-	return IntegerLiteralKind
-}
-
-func (l IntegerLiteral) Value() int {
+func (l Integer) Value() int {
 	return int(l)
 }
 
-func (l IntegerLiteral) String() string {
+func (l Integer) String() string {
 	return fmt.Sprintf("%d", int(l))
 }
 
 ////////////////////////////////////////////////////////////////
 
-type FloatLiteral float64
+type Float float64
 
-func (l FloatLiteral) Kind() LiteralKind {
-	return FloatLiteralKind
-}
-
-func (l FloatLiteral) Value() float64 {
+func (l Float) Value() float64 {
 	return float64(l)
 }
 
-func (l FloatLiteral) String() string {
+func (l Float) String() string {
 	s := strings.TrimRight(fmt.Sprintf("%0.2f", float64(l)), "0")
 	if strings.HasSuffix(s, ".") {
 		return s + "0"
@@ -92,14 +59,10 @@ func (l FloatLiteral) String() string {
 
 ////////////////////////////////////////////////////////////////
 
-type ArrayLiteral struct {
-	Body ArrayExpression
+type Array struct {
+	Body ArrayBlock
 }
 
-func (a ArrayLiteral) Kind() LiteralKind {
-	return ArrayLiteralKind
-}
-
-func (a ArrayLiteral) String() string {
+func (a Array) String() string {
 	return a.Body.String()
 }

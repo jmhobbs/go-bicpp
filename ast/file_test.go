@@ -9,11 +9,11 @@ import (
 
 func Test_File_String(t *testing.T) {
 	f := ast.File{
-		Directives: []ast.Directive{
-			ast.DefineDirective{Identifier: "true", Value: ast.IntegerLiteral(1)},
+		Directives: []ast.Node{
+			ast.Define{Identifier: "true", Value: ast.Integer(1)},
 		},
-		Declarations: []ast.Declaration{
-			ast.AssignmentDeclaration{Identifier: "myVar", Value: ast.IntegerLiteral(420)},
+		Declarations: []ast.Node{
+			ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
 		},
 	}
 

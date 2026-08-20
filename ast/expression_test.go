@@ -7,32 +7,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_BlockExpression_String(t *testing.T) {
-	b := ast.BlockExpression{
-		ast.AssignmentDeclaration{Identifier: "myVar", Value: ast.IntegerLiteral(42)},
+func Test_Block_String(t *testing.T) {
+	b := ast.Block{
+		ast.Assignment{Identifier: "myVar", Value: ast.Integer(42)},
 	}
 
 	expected := "{\nmyVar = 42;\n}"
 	assert.Equal(t, expected, b.String())
 }
 
-func Test_BlockExpression_Empty_String(t *testing.T) {
-	b := ast.BlockExpression{}
+func Test_Block_Empty_String(t *testing.T) {
+	b := ast.Block{}
 
 	expected := "{\n}"
 	assert.Equal(t, expected, b.String())
 }
 
-func Test_ArrayExpression_String(t *testing.T) {
-	a := ast.ArrayExpression{
-		ast.IntegerLiteral(42),
-		ast.FloatLiteral(3.14),
-		ast.ArrayLiteral{
-			Body: ast.ArrayExpression{
-				ast.StringLiteral("nested"),
+func Test_ArrayBlock_String(t *testing.T) {
+	a := ast.ArrayBlock{
+		ast.Integer(42),
+		ast.Float(3.14),
+		ast.Array{
+			Body: ast.ArrayBlock{
+				ast.String("nested"),
 			},
 		},
-		ast.StringLiteral("hello"),
+		ast.String("hello"),
 	}
 
 	expected := "{42, 3.14, {\"nested\"}, \"hello\"}"

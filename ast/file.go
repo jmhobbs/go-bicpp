@@ -2,9 +2,13 @@ package ast
 
 import "strings"
 
+type Node interface {
+	String() string
+}
+
 type File struct {
-	Directives   []Directive
-	Declarations []Declaration
+	Directives   []Node
+	Declarations []Node
 }
 
 func (f *File) String() string {

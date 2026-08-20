@@ -14,14 +14,8 @@ import "github.com/jmhobbs/go-bicpp/ast"
   floatValue float64
   stringValue string
 
-  literal ast.Literal
-  literals []ast.Literal
-
-  directive ast.Directive
-  directives []ast.Directive
-
-  decl ast.Declaration
-  decls []ast.Declaration
+  node ast.Node
+  nodes []ast.Node
 }
 
 %token <identifier> CLASS
@@ -31,17 +25,17 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %token <integerValue> INTEGER
 %token <floatValue> FLOAT
 
-%type <literal> literal
-%type <literal> value
-%type <literals> array_values
+%type <node> literal
+%type <node> value
+%type <nodes> array_values
 
-%type <directive> define_macro
-%type <directives> directives
+%type <node> define_macro
+%type <nodes> directives
 
-%type <decl> declaration
-%type <decls> declarations
+%type <node> declaration
+%type <nodes> declarations
 
-%type <decl> class_declaration, variable_declaration, array_declaration
+%type <node> class_declaration, variable_declaration, array_declaration
 
 %%
 
@@ -63,7 +57,7 @@ directives
     $$ = append($1, $2)
   }
   | define_macro {
-    $$ = []ast.Directive{$1}
+    $$ = []ast.Node{$1}
   }
   ;
 
@@ -72,7 +66,7 @@ declarations
     $$ = append($1, $2)
   }
   | declaration {
-    $$ = []ast.Declaration{$1}
+    $$ = []ast.Node{$1}
   }
   ;
 
@@ -84,45 +78,45 @@ declaration
 
 define_macro
   : TOK_DEFINE IDENTIFIER value {
-    $$ = ast.DefineDirective{Identifier: $2, Value: $3}
+    $$ = ast.Define{Identifier: $2, Value: $3}
   }
   ;
 
 class_declaration
   : CLASS TOK_SEMICOLON {
-    $$ = ast.ClassDeclaration{Identifier: $1}
+    $$ = ast.Class{Identifier: $1}
   }
   | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.ClassDeclaration{
+    $$ = ast.Class{
       Identifier: $1,
       Parent: $3,
-      Body: ast.BlockExpression($5),
+      Body: ast.Block($5),
     }
   }
   | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.ClassDeclaration{
+    $$ = ast.Class{
       Identifier: $1,
       Parent: $3,
-      Body: ast.BlockExpression{},
+      Body: ast.Block{},
     }
   }
   | CLASS TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.ClassDeclaration{
+    $$ = ast.Class{
       Identifier: $1,
-      Body: ast.BlockExpression($3),
+      Body: ast.Block($3),
     }
   }
   | CLASS TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.ClassDeclaration{
+    $$ = ast.Class{
       Identifier: $1,
-      Body: ast.BlockExpression{},
+      Body: ast.Block{},
     }
   }
   ;
 
 variable_declaration
   : IDENTIFIER TOK_ASSIGN value TOK_SEMICOLON  {
-    $$ =  ast.AssignmentDeclaration{
+    $$ =  ast.Assignment{
       Identifier: $1,
       Value: $3,
     }
@@ -131,10 +125,10 @@ variable_declaration
 
 array_declaration:
   IDENTIFIER TOK_ARRAY TOK_ASSIGN TOK_BLOCK_OPEN array_values TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ =  ast.AssignmentDeclaration{
+    $$ =  ast.Assignment{
       Identifier: $1,
-      Value: ast.ArrayLiteral{
-        Body: ast.ArrayExpression($5),
+      Value: ast.Array{
+        Body: ast.ArrayBlock($5),
       },
     }
   }
@@ -142,26 +136,26 @@ array_declaration:
 
 literal
   : INTEGER {
-    $$ = ast.IntegerLiteral($1)
+    $$ = ast.Integer($1)
   }
   | FLOAT {
-    $$ = ast.FloatLiteral($1)
+    $$ = ast.Float($1)
   }
   | STRING {
-    $$ = ast.StringLiteral($1)
+    $$ = ast.String($1)
   }
   ;
 
 value
   : IDENTIFIER {
-    $$ = ast.IdentifierLiteral($1)
+    $$ = ast.Identifier($1)
   }
   | literal
   ;
 
 array_values
   : value {
-    $$ = []ast.Literal{$1}
+    $$ = []ast.Node{$1}
   }
   | array_values TOK_COMMA value {
     $$ = append($$, $3)

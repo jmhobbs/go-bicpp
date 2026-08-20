@@ -18,14 +18,8 @@ type yySymType struct {
 	floatValue   float64
 	stringValue  string
 
-	literal  ast.Literal
-	literals []ast.Literal
-
-	directive  ast.Directive
-	directives []ast.Directive
-
-	decl  ast.Declaration
-	decls []ast.Declaration
+	node  ast.Node
+	nodes []ast.Node
 }
 
 const CLASS = 57346
@@ -69,7 +63,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line cpp.y:171
+//line cpp.y:165
 
 //line yacctab:1
 var yyExca = [...]int8{
@@ -485,152 +479,152 @@ yydefault:
 
 	case 1:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:49
+//line cpp.y:43
 		{
-			file.Directives = yyDollar[1].directives
+			file.Directives = yyDollar[1].nodes
 		}
 	case 2:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:52
+//line cpp.y:46
 		{
-			file.Directives = yyDollar[1].directives
-			file.Declarations = yyDollar[2].decls
+			file.Directives = yyDollar[1].nodes
+			file.Declarations = yyDollar[2].nodes
 		}
 	case 3:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:56
+//line cpp.y:50
 		{
-			file.Declarations = yyDollar[1].decls
+			file.Declarations = yyDollar[1].nodes
 		}
 	case 4:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:62
+//line cpp.y:56
 		{
-			yyVAL.directives = append(yyDollar[1].directives, yyDollar[2].directive)
+			yyVAL.nodes = append(yyDollar[1].nodes, yyDollar[2].node)
 		}
 	case 5:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:65
+//line cpp.y:59
 		{
-			yyVAL.directives = []ast.Directive{yyDollar[1].directive}
+			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 6:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:71
+//line cpp.y:65
 		{
-			yyVAL.decls = append(yyDollar[1].decls, yyDollar[2].decl)
+			yyVAL.nodes = append(yyDollar[1].nodes, yyDollar[2].node)
 		}
 	case 7:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:74
+//line cpp.y:68
 		{
-			yyVAL.decls = []ast.Declaration{yyDollar[1].decl}
+			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 11:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:86
+//line cpp.y:80
 		{
-			yyVAL.directive = ast.DefineDirective{Identifier: yyDollar[2].identifier, Value: yyDollar[3].literal}
+			yyVAL.node = ast.Define{Identifier: yyDollar[2].identifier, Value: yyDollar[3].node}
 		}
 	case 12:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:92
+//line cpp.y:86
 		{
-			yyVAL.decl = ast.ClassDeclaration{Identifier: yyDollar[1].identifier}
+			yyVAL.node = ast.Class{Identifier: yyDollar[1].identifier}
 		}
 	case 13:
 		yyDollar = yyS[yypt-7 : yypt+1]
-//line cpp.y:95
+//line cpp.y:89
 		{
-			yyVAL.decl = ast.ClassDeclaration{
+			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
 				Parent:     yyDollar[3].identifier,
-				Body:       ast.BlockExpression(yyDollar[5].decls),
+				Body:       ast.Block(yyDollar[5].nodes),
 			}
 		}
 	case 14:
 		yyDollar = yyS[yypt-6 : yypt+1]
-//line cpp.y:102
+//line cpp.y:96
 		{
-			yyVAL.decl = ast.ClassDeclaration{
+			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
 				Parent:     yyDollar[3].identifier,
-				Body:       ast.BlockExpression{},
+				Body:       ast.Block{},
 			}
 		}
 	case 15:
 		yyDollar = yyS[yypt-5 : yypt+1]
-//line cpp.y:109
+//line cpp.y:103
 		{
-			yyVAL.decl = ast.ClassDeclaration{
+			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
-				Body:       ast.BlockExpression(yyDollar[3].decls),
+				Body:       ast.Block(yyDollar[3].nodes),
 			}
 		}
 	case 16:
 		yyDollar = yyS[yypt-4 : yypt+1]
-//line cpp.y:115
+//line cpp.y:109
 		{
-			yyVAL.decl = ast.ClassDeclaration{
+			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
-				Body:       ast.BlockExpression{},
+				Body:       ast.Block{},
 			}
 		}
 	case 17:
 		yyDollar = yyS[yypt-4 : yypt+1]
-//line cpp.y:124
+//line cpp.y:118
 		{
-			yyVAL.decl = ast.AssignmentDeclaration{
+			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
-				Value:      yyDollar[3].literal,
+				Value:      yyDollar[3].node,
 			}
 		}
 	case 18:
 		yyDollar = yyS[yypt-7 : yypt+1]
-//line cpp.y:133
+//line cpp.y:127
 		{
-			yyVAL.decl = ast.AssignmentDeclaration{
+			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
-				Value: ast.ArrayLiteral{
-					Body: ast.ArrayExpression(yyDollar[5].literals),
+				Value: ast.Array{
+					Body: ast.ArrayBlock(yyDollar[5].nodes),
 				},
 			}
 		}
 	case 19:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:144
+//line cpp.y:138
 		{
-			yyVAL.literal = ast.IntegerLiteral(yyDollar[1].integerValue)
+			yyVAL.node = ast.Integer(yyDollar[1].integerValue)
 		}
 	case 20:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:147
+//line cpp.y:141
 		{
-			yyVAL.literal = ast.FloatLiteral(yyDollar[1].floatValue)
+			yyVAL.node = ast.Float(yyDollar[1].floatValue)
 		}
 	case 21:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:150
+//line cpp.y:144
 		{
-			yyVAL.literal = ast.StringLiteral(yyDollar[1].stringValue)
+			yyVAL.node = ast.String(yyDollar[1].stringValue)
 		}
 	case 22:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:156
+//line cpp.y:150
 		{
-			yyVAL.literal = ast.IdentifierLiteral(yyDollar[1].identifier)
+			yyVAL.node = ast.Identifier(yyDollar[1].identifier)
 		}
 	case 24:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:163
+//line cpp.y:157
 		{
-			yyVAL.literals = []ast.Literal{yyDollar[1].literal}
+			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
 	case 25:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:166
+//line cpp.y:160
 		{
-			yyVAL.literals = append(yyVAL.literals, yyDollar[3].literal)
+			yyVAL.nodes = append(yyVAL.nodes, yyDollar[3].node)
 		}
 	}
 	goto yystack /* stack new state and value */

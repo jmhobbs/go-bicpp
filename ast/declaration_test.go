@@ -7,42 +7,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_AssignmentDeclaration_String(t *testing.T) {
-	d := ast.AssignmentDeclaration{
+func Test_Assignment_String(t *testing.T) {
+	d := ast.Assignment{
 		Identifier: "myVar",
-		Value:      ast.IntegerLiteral(42),
+		Value:      ast.Integer(42),
 	}
 
 	assert.Equal(t, "myVar = 42;", d.String())
 }
 
-func Test_ClassDeclaration_String(t *testing.T) {
+func Test_Class_String(t *testing.T) {
 	tests := []struct {
 		Name        string
-		Declaration ast.ClassDeclaration
+		Declaration ast.Class
 		Expected    string
 	}{
 		{
 			Name: "Forward Declaration",
-			Declaration: ast.ClassDeclaration{
+			Declaration: ast.Class{
 				Identifier: "CfgModule",
 			},
 			Expected: "class CfgModule;",
 		},
 		{
 			Name: "Empty Class",
-			Declaration: ast.ClassDeclaration{
+			Declaration: ast.Class{
 				Identifier: "CfgModule",
-				Body:       ast.BlockExpression{},
+				Body:       ast.Block{},
 			},
 			Expected: "class CfgModule\n{\n};",
 		},
 		{
 			Name: "Empty Inherited Class",
-			Declaration: ast.ClassDeclaration{
+			Declaration: ast.Class{
 				Identifier: "CfgModule",
 				Parent:     "CfgBase",
-				Body:       ast.BlockExpression{},
+				Body:       ast.Block{},
 			},
 			Expected: "class CfgModule : CfgBase\n{\n};",
 		},

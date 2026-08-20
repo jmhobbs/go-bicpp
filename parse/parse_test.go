@@ -13,13 +13,13 @@ import (
 func Test_Parse_Define(t *testing.T) {
 	p, err := parse.Parse([]byte(`#define true 1`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Directives[0], ast.DefineDirective{Identifier: "true", Value: ast.IntegerLiteral(1)})
+	assert.Equal(t, p.Directives[0], ast.Define{Identifier: "true", Value: ast.Integer(1)})
 }
 
 func Test_Parse_ForwardClass(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule"}, p.Declarations[0])
+	assert.Equal(t, ast.Class{Identifier: "CfgModule"}, p.Declarations[0])
 }
 
 func Test_Parse_Class(t *testing.T) {
@@ -27,9 +27,9 @@ func Test_Parse_Class(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(
 		t,
-		ast.ClassDeclaration{
+		ast.Class{
 			Identifier: "CfgModule",
-			Body:       ast.BlockExpression{},
+			Body:       ast.Block{},
 		},
 		p.Declarations[0],
 	)
@@ -47,15 +47,15 @@ func Test_Parse_Nested_Class(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(
 		t,
-		ast.ClassDeclaration{
+		ast.Class{
 			Identifier: "CfgWhatever",
-			Body: ast.BlockExpression{
-				ast.AssignmentDeclaration{Identifier: "myVar", Value: ast.IntegerLiteral(420)},
-				ast.ClassDeclaration{
+			Body: ast.Block{
+				ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
+				ast.Class{
 					Identifier: "CfgAnother",
-					Body: ast.BlockExpression{
-						ast.AssignmentDeclaration{Identifier: "scope", Value: ast.IntegerLiteral(2)},
-						ast.AssignmentDeclaration{Identifier: "model", Value: ast.StringLiteral(`\dz\path\to\thing.p3d`)},
+					Body: ast.Block{
+						ast.Assignment{Identifier: "scope", Value: ast.Integer(2)},
+						ast.Assignment{Identifier: "model", Value: ast.String(`\dz\path\to\thing.p3d`)},
 					},
 				},
 			},
@@ -68,10 +68,10 @@ func Test_Parse_InheritedClass(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(
 		t,
-		ast.ClassDeclaration{
+		ast.Class{
 			Identifier: "CfgModule",
 			Parent:     "CfgBase",
-			Body:       ast.BlockExpression{},
+			Body:       ast.Block{},
 		},
 		p.Declarations[0],
 	)
@@ -93,31 +93,31 @@ class CfgOuter {
 func Test_Parse_IntValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`intValue = 42;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "intValue", Value: ast.IntegerLiteral(42)})
+	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "intValue", Value: ast.Integer(42)})
 }
 
 func Test_Parse_FloatValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`floatValue = 42.0;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "floatValue", Value: ast.FloatLiteral(42.0)})
+	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "floatValue", Value: ast.Float(42.0)})
 }
 
 func Test_Parse_StringValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`stringValue = "text with spaces";`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "stringValue", Value: ast.StringLiteral("text with spaces")})
+	assert.Equal(t, p.Declarations[0], ast.Assignment{Identifier: "stringValue", Value: ast.String("text with spaces")})
 }
 
 func Test_Parse_ArrayValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`arrValue[] = {1, 2.5, "string"};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{
+	assert.Equal(t, p.Declarations[0], ast.Assignment{
 		Identifier: "arrValue",
-		Value: ast.ArrayLiteral{
-			Body: ast.ArrayExpression{
-				ast.IntegerLiteral(1),
-				ast.FloatLiteral(2.5),
-				ast.StringLiteral("string"),
+		Value: ast.Array{
+			Body: ast.ArrayBlock{
+				ast.Integer(1),
+				ast.Float(2.5),
+				ast.String("string"),
 			},
 		},
 	})

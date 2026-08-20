@@ -4,49 +4,24 @@ import (
 	"strings"
 )
 
-type Declaration interface {
-	Kind() DeclarationKind
-	String() string
-}
-
-////////////////////////////////////////////////////////////////
-
-//go:generate go tool stringer -type=DeclarationKind
-type DeclarationKind uint8
-
-const (
-	Assignment DeclarationKind = iota
-	Class
-)
-
-////////////////////////////////////////////////////////////////
-
-type AssignmentDeclaration struct {
+type Assignment struct {
 	Identifier string
-	Value      Literal
+	Value      Node
 }
 
-func (d AssignmentDeclaration) Kind() DeclarationKind {
-	return Assignment
-}
-
-func (d AssignmentDeclaration) String() string {
+func (d Assignment) String() string {
 	return d.Identifier + " = " + d.Value.String() + ";"
 }
 
 ////////////////////////////////////////////////////////////////
 
-type ClassDeclaration struct {
+type Class struct {
 	Identifier string
 	Parent     string
-	Body       BlockExpression
+	Body       Block
 }
 
-func (d ClassDeclaration) Kind() DeclarationKind {
-	return Class
-}
-
-func (d ClassDeclaration) String() string {
+func (d Class) String() string {
 	var builder strings.Builder
 	builder.WriteString("class " + d.Identifier)
 	if d.Parent != "" {

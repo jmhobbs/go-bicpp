@@ -58,30 +58,29 @@ func (p *Printer) Write(out io.Writer, file *ast.File) error {
 	return nil
 }
 
-func (p *Printer) writeDeclaration(depth int, out io.Writer, declaration ast.Declaration) error {
+func (p *Printer) writeDeclaration(depth int, out io.Writer, declaration ast.Node) error {
 	_, err := out.Write([]byte(strings.Repeat(p.indent, depth)))
 	if err != nil {
 		return err
 	}
 
-	switch declaration.Kind() {
+	switch decl := declaration.(type) {
 	case ast.Assignment:
 		if _, err = out.Write([]byte(declaration.String() + "\n")); err != nil {
 			return err
 		}
 	case ast.Class:
-		classDecl := declaration.(ast.ClassDeclaration)
-		if _, err = fmt.Fprintf(out, "class %s", classDecl.Identifier); err != nil {
+		if _, err = fmt.Fprintf(out, "class %s", decl.Identifier); err != nil {
 			return err
 		}
-		if classDecl.Parent != "" {
-			if _, err = fmt.Fprintf(out, " : %s", classDecl.Parent); err != nil {
+		if decl.Parent != "" {
+			if _, err = fmt.Fprintf(out, " : %s", decl.Parent); err != nil {
 				return err
 			}
 		}
-		if classDecl.Body != nil {
+		if decl.Body != nil {
 			// special case, keep it on one line if it's empty
-			if p.condenseEmptyClassBodies && len(classDecl.Body) == 0 {
+			if p.condenseEmptyClassBodies && len(decl.Body) == 0 {
 				if _, err = out.Write([]byte{' ', '{', '}'}); err != nil {
 					return err
 				}
@@ -95,7 +94,7 @@ func (p *Printer) writeDeclaration(depth int, out io.Writer, declaration ast.Dec
 				if _, err = out.Write([]byte{'{', '\n'}); err != nil {
 					return err
 				}
-				for _, nested := range classDecl.Body {
+				for _, nested := range decl.Body {
 					if err = p.writeDeclaration(depth+1, out, nested); err != nil {
 						return err
 					}

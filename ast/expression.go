@@ -2,9 +2,9 @@ package ast
 
 import "strings"
 
-type BlockExpression []Declaration
+type Block []Node
 
-func (b BlockExpression) String() string {
+func (b Block) String() string {
 	lines := make([]string, len(b)+2)
 	lines[0] = "{"
 	lines[len(lines)-1] = "}"
@@ -14,9 +14,9 @@ func (b BlockExpression) String() string {
 	return strings.Join(lines, "\n")
 }
 
-type ArrayExpression []Literal
+type ArrayBlock []Node
 
-func (a ArrayExpression) String() string {
+func (a ArrayBlock) String() string {
 	values := make([]string, len(a))
 	for i, value := range a {
 		values[i] = value.String()

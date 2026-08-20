@@ -8,8 +8,8 @@ var file ast.File
 //go:generate gofmt -w cpp.go
 func Parse(input []byte, debug bool) (*ast.File, error) {
 	file = ast.File{
-		Directives:   []ast.Directive{},
-		Declarations: []ast.Declaration{},
+		Directives:   []ast.Node{},
+		Declarations: []ast.Node{},
 	}
 
 	yyErrorVerbose = true

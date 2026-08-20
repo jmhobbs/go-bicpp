@@ -54,3 +54,8 @@ func Test_Class_String(t *testing.T) {
 		})
 	}
 }
+
+func Test_Comment_String(t *testing.T) {
+	c := ast.Comment("this is a comment")
+	assert.Equal(t, "// this is a comment", c.String())
+}

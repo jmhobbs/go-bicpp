@@ -122,3 +122,29 @@ func Test_Parse_ArrayValue(t *testing.T) {
 		},
 	})
 }
+
+func Test_Parse_Comment(t *testing.T) {
+	doc := `// this is a comment
+notThis = "though";
+`
+
+	p, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		&ast.File{
+			Directives: []ast.Node{},
+			Declarations: []ast.Node{
+				ast.Comment(" this is a comment"),
+				ast.Assignment{Identifier: "notThis", Value: ast.String("though")},
+			},
+		},
+		p,
+	)
+}
+
+func Test_Parse_Comment_Empty(t *testing.T) {
+	p, err := parse.Parse([]byte(`//`), true)
+	require.NoError(t, err)
+	assert.Equal(t, ast.Comment(""), p.Declarations[0])
+}

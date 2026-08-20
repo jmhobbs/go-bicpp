@@ -69,6 +69,11 @@ func (lex *lexer) Lex(out *yySymType) int {
               tok = INTEGER;
               fbreak;
             };
+            '//'^'\n'* => {
+              tok = TOK_COMMENT;
+              out.stringValue = string(lex.data[lex.ts+2:lex.te]);
+              fbreak;
+            };
             '=' => { tok = TOK_ASSIGN; fbreak; };
             ',' => { tok = TOK_COMMA; fbreak; };
             '{' => { tok = TOK_BLOCK_OPEN; fbreak;};

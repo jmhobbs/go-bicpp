@@ -34,3 +34,11 @@ func (d Class) String() string {
 	builder.WriteString(";")
 	return builder.String()
 }
+
+////////////////////////////////////////////////////////////////
+
+type Comment string
+
+func (c Comment) String() string {
+	return "// " + string(c)
+}

@@ -2,12 +2,13 @@ package parse
 
 import "github.com/jmhobbs/go-bicpp/ast"
 
-var program ast.Program
+var file ast.File
 
 //go:generate go tool goyacc -o cpp.go cpp.y
-func Parse(input []byte, debug bool) (*ast.Program, error) {
-	program = ast.Program{
-		Definitions:  []ast.Definition{},
+//go:generate gofmt -w cpp.go
+func Parse(input []byte, debug bool) (*ast.File, error) {
+	file = ast.File{
+		Directives:   []ast.Directive{},
 		Declarations: []ast.Declaration{},
 	}
 
@@ -19,5 +20,5 @@ func Parse(input []byte, debug bool) (*ast.Program, error) {
 	if yyParse(lex) != 0 {
 		return nil, lex.err
 	}
-	return &program, nil
+	return &file, nil
 }

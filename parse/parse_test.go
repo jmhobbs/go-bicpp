@@ -13,19 +13,26 @@ import (
 func Test_Parse_Define(t *testing.T) {
 	p, err := parse.Parse([]byte(`#define true 1`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Definitions[0], ast.Definition{Identifier: "true", Value: ast.IntegerValue(1)})
+	assert.Equal(t, p.Directives[0], ast.DefineDirective{Identifier: "true", Value: ast.IntegerLiteral(1)})
 }
 
 func Test_Parse_ForwardClass(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ForwardClassDeclaration{Identifier: "CfgModule"}, p.Declarations[0])
+	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule"}, p.Declarations[0])
 }
 
 func Test_Parse_Class(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule {};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Fields: []ast.Declaration{}}, p.Declarations[0])
+	assert.Equal(
+		t,
+		ast.ClassDeclaration{
+			Identifier: "CfgModule",
+			Body:       ast.BlockExpression{},
+		},
+		p.Declarations[0],
+	)
 }
 
 func Test_Parse_Nested_Class(t *testing.T) {
@@ -42,13 +49,13 @@ func Test_Parse_Nested_Class(t *testing.T) {
 		t,
 		ast.ClassDeclaration{
 			Identifier: "CfgWhatever",
-			Fields: []ast.Declaration{
-				ast.VariableDeclaration{Identifier: "myVar", Value: ast.IntegerValue(420)},
+			Body: ast.BlockExpression{
+				ast.AssignmentDeclaration{Identifier: "myVar", Value: ast.IntegerLiteral(420)},
 				ast.ClassDeclaration{
 					Identifier: "CfgAnother",
-					Fields: []ast.Declaration{
-						ast.VariableDeclaration{Identifier: "scope", Value: ast.IntegerValue(2)},
-						ast.VariableDeclaration{Identifier: "model", Value: ast.StringValue(`\dz\path\to\thing.p3d`)},
+					Body: ast.BlockExpression{
+						ast.AssignmentDeclaration{Identifier: "scope", Value: ast.IntegerLiteral(2)},
+						ast.AssignmentDeclaration{Identifier: "model", Value: ast.StringLiteral(`\dz\path\to\thing.p3d`)},
 					},
 				},
 			},
@@ -59,7 +66,15 @@ func Test_Parse_Nested_Class(t *testing.T) {
 func Test_Parse_InheritedClass(t *testing.T) {
 	p, err := parse.Parse([]byte(`class CfgModule: CfgBase {};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, ast.ClassDeclaration{Identifier: "CfgModule", Parent: "CfgBase", Fields: []ast.Declaration{}}, p.Declarations[0])
+	assert.Equal(
+		t,
+		ast.ClassDeclaration{
+			Identifier: "CfgModule",
+			Parent:     "CfgBase",
+			Body:       ast.BlockExpression{},
+		},
+		p.Declarations[0],
+	)
 }
 
 func Test_Parse_ErrorLocation(t *testing.T) {
@@ -78,30 +93,32 @@ class CfgOuter {
 func Test_Parse_IntValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`intValue = 42;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.VariableDeclaration{Identifier: "intValue", Value: ast.IntegerValue(42)})
+	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "intValue", Value: ast.IntegerLiteral(42)})
 }
 
 func Test_Parse_FloatValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`floatValue = 42.0;`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.VariableDeclaration{Identifier: "floatValue", Value: ast.FloatValue(42.0)})
+	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "floatValue", Value: ast.FloatLiteral(42.0)})
 }
 
 func Test_Parse_StringValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`stringValue = "text with spaces";`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.VariableDeclaration{Identifier: "stringValue", Value: ast.StringValue("text with spaces")})
+	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{Identifier: "stringValue", Value: ast.StringLiteral("text with spaces")})
 }
 
 func Test_Parse_ArrayValue(t *testing.T) {
 	p, err := parse.Parse([]byte(`arrValue[] = {1, 2.5, "string"};`), true)
 	require.NoError(t, err)
-	assert.Equal(t, p.Declarations[0], ast.VariableDeclaration{
+	assert.Equal(t, p.Declarations[0], ast.AssignmentDeclaration{
 		Identifier: "arrValue",
-		Value: ast.ArrayValue{
-			ast.IntegerValue(1),
-			ast.FloatValue(2.5),
-			ast.StringValue("string"),
+		Value: ast.ArrayLiteral{
+			Body: ast.ArrayExpression{
+				ast.IntegerLiteral(1),
+				ast.FloatLiteral(2.5),
+				ast.StringLiteral("string"),
+			},
 		},
 	})
 }

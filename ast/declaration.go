@@ -11,64 +11,51 @@ type Declaration interface {
 
 ////////////////////////////////////////////////////////////////
 
+//go:generate go tool stringer -type=DeclarationKind
 type DeclarationKind uint8
 
 const (
-	VariableDeclarationKind DeclarationKind = iota
-	ClassDeclarationKind
-	ForwardClassDeclarationKind
+	Assignment DeclarationKind = iota
+	Class
 )
 
 ////////////////////////////////////////////////////////////////
 
-type VariableDeclaration struct {
+type AssignmentDeclaration struct {
 	Identifier string
-	Value      Value
+	Value      Literal
 }
 
-func (d VariableDeclaration) Kind() DeclarationKind {
-	return VariableDeclarationKind
+func (d AssignmentDeclaration) Kind() DeclarationKind {
+	return Assignment
 }
 
-func (d VariableDeclaration) String() string {
-	// TODO: Arrays
+func (d AssignmentDeclaration) String() string {
 	return d.Identifier + " = " + d.Value.String() + ";"
 }
 
 ////////////////////////////////////////////////////////////////
 
-type ForwardClassDeclaration struct {
-	Identifier string
-}
-
-func (d ForwardClassDeclaration) Kind() DeclarationKind {
-	return ForwardClassDeclarationKind
-}
-
-func (d ForwardClassDeclaration) String() string {
-	return "class " + d.Identifier + ";"
-}
-
 type ClassDeclaration struct {
 	Identifier string
 	Parent     string
-	Fields     []Declaration
+	Body       BlockExpression
 }
 
 func (d ClassDeclaration) Kind() DeclarationKind {
-	return ClassDeclarationKind
+	return Class
 }
 
 func (d ClassDeclaration) String() string {
-	lines := make([]string, len(d.Fields)+3)
-	lines[0] = "class " + d.Identifier
+	var builder strings.Builder
+	builder.WriteString("class " + d.Identifier)
 	if d.Parent != "" {
-		lines[0] = lines[0] + " : " + d.Parent
+		builder.WriteString(" : " + d.Parent)
 	}
-	lines[1] = "{"
-	lines[len(lines)-1] = "}"
-	for i, f := range d.Fields {
-		lines[i+2] = f.String()
+	if d.Body != nil {
+		builder.WriteString("\n")
+		builder.WriteString(d.Body.String())
 	}
-	return strings.Join(lines, "\n")
+	builder.WriteString(";")
+	return builder.String()
 }

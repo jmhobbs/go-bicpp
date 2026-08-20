@@ -5,84 +5,84 @@ import (
 	"strings"
 )
 
-type Value interface {
-	Kind() ValueKind
+type Literal interface {
+	Kind() LiteralKind
 	String() string
 }
 
 ////////////////////////////////////////////////////////////////
 
-type ValueKind uint8
+type LiteralKind uint8
 
 const (
-	IntegerValueKind ValueKind = iota
-	FloatValueKind
-	StringValueKind
-	ArrayValueKind
-	IdentifierValueKind
+	IntegerLiteralKind LiteralKind = iota
+	FloatLiteralKind
+	StringLiteralKind
+	ArrayLiteralKind
+	IdentifierLiteralKind
 )
 
 ////////////////////////////////////////////////////////////////
 
-type IdentifierValue string
+type IdentifierLiteral string
 
-func (l IdentifierValue) Kind() ValueKind {
-	return IdentifierValueKind
+func (l IdentifierLiteral) Kind() LiteralKind {
+	return IdentifierLiteralKind
 }
 
-func (l IdentifierValue) Value() string {
+func (l IdentifierLiteral) Value() string {
 	return string(l)
 }
 
-func (l IdentifierValue) String() string {
+func (l IdentifierLiteral) String() string {
 	return string(l)
 }
 
 ////////////////////////////////////////////////////////////////
 
-type StringValue string
+type StringLiteral string
 
-func (l StringValue) Kind() ValueKind {
-	return StringValueKind
+func (l StringLiteral) Kind() LiteralKind {
+	return StringLiteralKind
 }
 
-func (l StringValue) Value() string {
+func (l StringLiteral) Value() string {
 	return string(l)
 }
 
-func (l StringValue) String() string {
+func (l StringLiteral) String() string {
 	return fmt.Sprintf("%q", string(l))
 }
 
 ////////////////////////////////////////////////////////////////
 
-type IntegerValue int
+type IntegerLiteral int
 
-func (l IntegerValue) Kind() ValueKind {
-	return IntegerValueKind
+func (l IntegerLiteral) Kind() LiteralKind {
+	return IntegerLiteralKind
 }
 
-func (l IntegerValue) Value() int {
+func (l IntegerLiteral) Value() int {
 	return int(l)
 }
 
-func (l IntegerValue) String() string {
+func (l IntegerLiteral) String() string {
 	return fmt.Sprintf("%d", int(l))
 }
 
 ////////////////////////////////////////////////////////////////
 
-type FloatValue float64
+type FloatLiteral float64
 
-func (l FloatValue) Kind() ValueKind {
-	return FloatValueKind
+func (l FloatLiteral) Kind() LiteralKind {
+	return FloatLiteralKind
 }
 
-func (l FloatValue) Value() float64 {
+func (l FloatLiteral) Value() float64 {
 	return float64(l)
 }
 
-func (l FloatValue) String() string {
+func (l FloatLiteral) String() string {
 	s := strings.TrimRight(fmt.Sprintf("%0.2f", float64(l)), "0")
 	if strings.HasSuffix(s, ".") {
 		return s + "0"
@@ -92,16 +92,14 @@ func (l FloatValue) String() string {
 
 ////////////////////////////////////////////////////////////////
 
-type ArrayValue []Value
-
-func (l ArrayValue) Kind() ValueKind {
-	return ArrayValueKind
+type ArrayLiteral struct {
+	Body ArrayExpression
 }
 
-func (l ArrayValue) String() string {
-	values := make([]string, len(l))
-	for i, value := range l {
-		values[i] = value.String()
-	}
-	return "{" + strings.Join(values, ", ") + "}"
+func (a ArrayLiteral) Kind() LiteralKind {
+	return ArrayLiteralKind
+}
+
+func (a ArrayLiteral) String() string {
+	return a.Body.String()
 }

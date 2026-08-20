@@ -1,0 +1,8 @@
+version: "2"
+linters:
+  enable:
+    - exhaustive
+  exclusions:
+    paths:
+      - parse/cpp.go
+      - parse/lex.go

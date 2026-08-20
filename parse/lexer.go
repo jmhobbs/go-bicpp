@@ -3,6 +3,7 @@ package parse
 import "strings"
 
 //go:generate ragel -Z -G2 -o lex.go lex.rl
+//go:generate gofmt -w lex.go
 type lexer struct {
 	data        []byte
 	p, pe, cs   int
@@ -44,18 +45,12 @@ func (lex *lexer) context(target, contextLines int) (before []string, line strin
 		return nil, "", nil
 	}
 
-	start := idx - contextLines
-	if start < 0 {
-		start = 0
-	}
+	start := max(0, idx-contextLines)
 	before = lines[start:idx]
 
 	line = lines[idx]
 
-	end := idx + 1 + contextLines
-	if end > len(lines) {
-		end = len(lines)
-	}
+	end := min(len(lines), idx+1+contextLines)
 	after = lines[idx+1 : end]
 
 	return before, line, after

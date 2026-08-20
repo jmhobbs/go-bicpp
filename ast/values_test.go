@@ -10,41 +10,43 @@ import (
 func Test_Stringers(t *testing.T) {
 	tests := []struct {
 		Name     string
-		Value    ast.Value
+		Value    ast.Literal
 		Expected string
 	}{
 		{
 			Name:     "Identifier",
-			Value:    ast.IdentifierValue("myVar"),
+			Value:    ast.IdentifierLiteral("myVar"),
 			Expected: "myVar",
 		},
 		{
 			Name:     "String",
-			Value:    ast.StringValue("myString"),
+			Value:    ast.StringLiteral("myString"),
 			Expected: `"myString"`,
 		},
 		{
 			Name:     "Integer",
-			Value:    ast.IntegerValue(42),
+			Value:    ast.IntegerLiteral(42),
 			Expected: "42",
 		},
 		{
 			Name:     "Float",
-			Value:    ast.FloatValue(3.9),
+			Value:    ast.FloatLiteral(3.9),
 			Expected: "3.9",
 		},
 		{
 			Name:     "Float must have one zero",
-			Value:    ast.FloatValue(3.0),
+			Value:    ast.FloatLiteral(3.0),
 			Expected: "3.0",
 		},
 		{
 			Name: "Array",
-			Value: ast.ArrayValue{
-				ast.IdentifierValue("myVar"),
-				ast.IntegerValue(1),
-				ast.FloatValue(2.5),
-				ast.StringValue("string"),
+			Value: ast.ArrayLiteral{
+				Body: ast.ArrayExpression{
+					ast.IdentifierLiteral("myVar"),
+					ast.IntegerLiteral(1),
+					ast.FloatLiteral(2.5),
+					ast.StringLiteral("string"),
+				},
 			},
 			Expected: `{myVar, 1, 2.5, "string"}`,
 		},

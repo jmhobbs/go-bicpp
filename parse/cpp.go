@@ -67,7 +67,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyInitialStackSize = 16
 
-//line cpp.y:193
+//line cpp.y:203
 
 //line yacctab:1
 var yyExca = [...]int8{
@@ -78,44 +78,45 @@ var yyExca = [...]int8{
 
 const yyPrivate = 57344
 
-const yyLast = 65
+const yyLast = 72
 
 var yyAct = [...]int8{
-	26, 25, 5, 19, 3, 35, 17, 15, 12, 13,
-	12, 13, 20, 44, 33, 50, 22, 45, 17, 24,
-	47, 6, 14, 23, 14, 34, 27, 28, 29, 30,
-	42, 31, 39, 38, 46, 31, 43, 41, 27, 28,
-	29, 30, 32, 18, 17, 1, 49, 48, 27, 28,
-	29, 30, 4, 31, 37, 16, 10, 9, 8, 7,
-	40, 2, 36, 11, 21,
+	26, 25, 5, 41, 19, 20, 17, 12, 13, 22,
+	12, 13, 12, 13, 35, 45, 24, 54, 17, 46,
+	23, 14, 40, 6, 14, 34, 14, 53, 49, 43,
+	52, 48, 39, 38, 31, 32, 44, 27, 28, 29,
+	30, 33, 31, 37, 47, 17, 18, 51, 50, 27,
+	28, 29, 30, 1, 31, 27, 28, 29, 30, 42,
+	3, 4, 15, 10, 16, 9, 8, 7, 2, 36,
+	11, 21,
 }
 
 var yyPact = [...]int16{
-	4, -32768, 4, 6, -32768, -32768, 38, -32768, -16, -32768,
-	-32768, -32768, 0, 10, -32768, 6, -32768, -32768, 21, -32768,
-	-32768, 32, 9, 33, -8, -32768, -32768, -32768, -32768, -32768,
-	-32768, 43, 6, -32768, 18, 25, 2, -32768, -32768, -32768,
-	23, 6, -32768, 8, -32768, 21, 3, -32768, -32768, -32768,
-	-32768,
+	6, -32768, 6, 8, -32768, -32768, 41, -32768, -15, -32768,
+	-32768, -32768, -7, 7, -32768, 8, -32768, -32768, 44, -32768,
+	-32768, 25, 36, 50, 1, -32768, -32768, -32768, -32768, -32768,
+	-32768, 32, 3, -32768, 17, 24, 4, -32768, -32768, -32768,
+	8, 20, 8, -32768, 16, -32768, 44, 19, 15, -32768,
+	-32768, -32768, 5, -32768, -32768,
 }
 
 var yyPgo = [...]int8{
-	0, 64, 1, 63, 62, 0, 52, 61, 2, 4,
-	60, 59, 58, 57, 56, 45,
+	0, 71, 1, 70, 69, 0, 61, 68, 2, 59,
+	3, 67, 66, 65, 63, 53,
 }
 
 var yyR1 = [...]int8{
 	0, 15, 15, 15, 7, 7, 9, 9, 10, 10,
 	8, 8, 8, 8, 8, 6, 6, 1, 1, 11,
-	11, 3, 12, 13, 14, 2, 2, 2, 2, 5,
-	5, 4, 4, 4, 4,
+	11, 11, 3, 12, 13, 14, 2, 2, 2, 2,
+	5, 5, 4, 4, 4, 4,
 }
 
 var yyR2 = [...]int8{
 	0, 1, 2, 1, 2, 1, 2, 1, 1, 0,
 	1, 1, 1, 1, 1, 3, 3, 2, 0, 2,
-	6, 2, 4, 5, 1, 1, 1, 1, 1, 3,
-	2, 1, 1, 3, 3,
+	7, 6, 2, 4, 5, 1, 1, 1, 1, 1,
+	3, 2, 1, 1, 3, 3,
 }
 
 var yyChk = [...]int16{
@@ -123,17 +124,17 @@ var yyChk = [...]int16{
 	-14, -3, 4, 5, 18, -9, -6, -8, 5, 19,
 	12, -1, 16, 13, 9, -2, -5, 5, 6, 7,
 	8, 10, 10, 5, -2, 13, -4, 11, -2, -5,
-	-10, -9, 12, -5, 11, 15, 11, 12, -2, -5,
-	12,
+	19, -10, -9, 12, -5, 11, 15, -10, 11, 12,
+	-2, -5, 11, 12, 12,
 }
 
 var yyDef = [...]int8{
 	0, -2, 1, 3, 5, 7, 0, 10, 11, 12,
-	13, 14, 18, 0, 24, 2, 4, 6, 0, 21,
-	19, 0, 0, 0, 0, 15, 16, 25, 26, 27,
-	28, 0, 9, 17, 0, 0, 0, 30, 31, 32,
-	0, 8, 22, 0, 29, 0, 0, 23, 33, 34,
-	20,
+	13, 14, 18, 0, 25, 2, 4, 6, 0, 22,
+	19, 0, 0, 0, 0, 15, 16, 26, 27, 28,
+	29, 0, 9, 17, 0, 0, 0, 31, 32, 33,
+	9, 0, 8, 23, 0, 30, 0, 0, 0, 24,
+	34, 35, 0, 21, 20,
 }
 
 var yyTok1 = [...]int8{
@@ -571,8 +572,21 @@ yydefault:
 			yyVAL.node = ast.Class{Identifier: yyDollar[1].identifier}
 		}
 	case 20:
-		yyDollar = yyS[yypt-6 : yypt+1]
+		yyDollar = yyS[yypt-7 : yypt+1]
 //line cpp.y:112
+		{
+			yyVAL.node = ast.Class{
+				Identifier: yyDollar[1].identifier,
+				Parent:     yyDollar[2].identifier,
+				Body: ast.CommentedNode{
+					Node:    ast.Block(yyDollar[5].nodes),
+					Comment: ast.Comment(yyDollar[4].stringValue),
+				},
+			}
+		}
+	case 21:
+		yyDollar = yyS[yypt-6 : yypt+1]
+//line cpp.y:122
 		{
 			yyVAL.node = ast.Class{
 				Identifier: yyDollar[1].identifier,
@@ -580,96 +594,96 @@ yydefault:
 				Body:       ast.Block(yyDollar[4].nodes),
 			}
 		}
-	case 21:
+	case 22:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:122
+//line cpp.y:132
 		{
 			yyVAL.node = ast.CommentedNode{
 				Node:    yyDollar[1].node,
 				Comment: ast.Comment(yyDollar[2].stringValue),
 			}
 		}
-	case 22:
+	case 23:
 		yyDollar = yyS[yypt-4 : yypt+1]
-//line cpp.y:131
+//line cpp.y:141
 		{
 			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
 				Value:      yyDollar[3].node,
 			}
 		}
-	case 23:
+	case 24:
 		yyDollar = yyS[yypt-5 : yypt+1]
-//line cpp.y:140
+//line cpp.y:150
 		{
 			yyVAL.node = ast.Assignment{
 				Identifier: yyDollar[1].identifier,
 				Value:      ast.Array(yyDollar[4].nodes),
 			}
 		}
-	case 24:
+	case 25:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:149
+//line cpp.y:159
 		{
 			yyVAL.node = ast.Comment(yyDollar[1].stringValue)
 		}
-	case 25:
+	case 26:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:155
+//line cpp.y:165
 		{
 			yyVAL.node = ast.Identifier(yyDollar[1].identifier)
 		}
-	case 26:
+	case 27:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:158
+//line cpp.y:168
 		{
 			yyVAL.node = ast.Integer(yyDollar[1].integerValue)
 		}
-	case 27:
+	case 28:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:161
+//line cpp.y:171
 		{
 			yyVAL.node = ast.Float(yyDollar[1].floatValue)
 		}
-	case 28:
+	case 29:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:164
+//line cpp.y:174
 		{
 			yyVAL.node = ast.String(yyDollar[1].stringValue)
 		}
-	case 29:
+	case 30:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:170
+//line cpp.y:180
 		{
 			yyVAL.nodes = ast.Array(yyDollar[2].nodes)
 		}
-	case 30:
+	case 31:
 		yyDollar = yyS[yypt-2 : yypt+1]
-//line cpp.y:173
+//line cpp.y:183
 		{
 			yyVAL.nodes = ast.Array{}
 		}
-	case 31:
+	case 32:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:179
+//line cpp.y:189
 		{
 			yyVAL.nodes = []ast.Node{yyDollar[1].node}
 		}
-	case 32:
+	case 33:
 		yyDollar = yyS[yypt-1 : yypt+1]
-//line cpp.y:182
+//line cpp.y:192
 		{
 			yyVAL.nodes = yyDollar[1].nodes
 		}
-	case 33:
+	case 34:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:185
+//line cpp.y:195
 		{
 			yyVAL.nodes = append(yyVAL.nodes, yyDollar[3].node)
 		}
-	case 34:
+	case 35:
 		yyDollar = yyS[yypt-3 : yypt+1]
-//line cpp.y:188
+//line cpp.y:198
 		{
 			yyVAL.nodes = append(yyVAL.nodes, ast.Array(yyDollar[3].nodes))
 		}

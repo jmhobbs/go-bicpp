@@ -109,6 +109,16 @@ class_declaration
   : CLASS TOK_SEMICOLON {
     $$ = ast.Class{Identifier: $1}
   }
+  | CLASS maybe_parent TOK_BLOCK_OPEN INLINE_COMMENT maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
+    $$ = ast.Class{
+      Identifier: $1,
+      Parent: $2,
+      Body: ast.CommentedNode{
+        Node: ast.Block($5),
+        Comment: ast.Comment($4),
+      },
+    }
+  }
   | CLASS maybe_parent TOK_BLOCK_OPEN maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
     $$ = ast.Class{
       Identifier: $1,

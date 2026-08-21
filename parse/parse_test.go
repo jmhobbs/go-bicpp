@@ -32,6 +32,19 @@ class CfgAnother {
 		scope = 2;
 	};
 };
+
+inlineComment = "what do you do now?"; // this is a problem
+
+arrComment[] = {
+	1, // noted
+	2,
+	3
+};
+
+class CfgComment // this is weird
+{ // this is weird too
+	// a regular comment
+}; // I guess you can do this, I can't stop you
 `
 
 	f, err := parse.Parse([]byte(doc), true)

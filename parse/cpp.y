@@ -25,6 +25,8 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %token <integerValue> INTEGER
 %token <floatValue> FLOAT
 
+%type <identifier> maybe_parent
+
 %type <node> literal inline_comment
 %type <nodes> array_values array
 
@@ -32,7 +34,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %type <nodes> directives
 
 %type <node> declaration
-%type <nodes> declarations
+%type <nodes> declarations maybe_declarations
 
 %type <node> class_declaration, variable_declaration, array_declaration, comment_declaration
 
@@ -68,6 +70,15 @@ declarations
   }
   ;
 
+maybe_declarations
+  : declarations {
+    $$ = $1
+  }
+  | {
+    $$ = []ast.Node{}
+  }
+  ;
+
 declaration
   : class_declaration
   | variable_declaration
@@ -85,34 +96,24 @@ define_macro
   }
   ;
 
+maybe_parent
+  : TOK_COLON IDENTIFIER {
+    $$ = $2
+  }
+  | {
+    $$ = ""
+  }
+  ;
+
 class_declaration
   : CLASS TOK_SEMICOLON {
     $$ = ast.Class{Identifier: $1}
   }
-  | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
+  | CLASS maybe_parent TOK_BLOCK_OPEN maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
     $$ = ast.Class{
       Identifier: $1,
-      Parent: $3,
-      Body: ast.Block($5),
-    }
-  }
-  | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.Class{
-      Identifier: $1,
-      Parent: $3,
-      Body: ast.Block{},
-    }
-  }
-  | CLASS TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.Class{
-      Identifier: $1,
-      Body: ast.Block($3),
-    }
-  }
-  | CLASS TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.Class{
-      Identifier: $1,
-      Body: ast.Block{},
+      Parent: $2,
+      Body: ast.Block($4),
     }
   }
   ;

@@ -46,6 +46,23 @@ func Test_Parse_InlineComment_BlockOpen(t *testing.T) {
 	)
 }
 
+func Test_Parse_InlineComment_BlockClose(t *testing.T) {
+	doc := `class CfgModule {
+}; // this is a comment`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node:    ast.Class{Identifier: "CfgModule", Body: ast.Block{}},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
 func Test_Parse_Exhaustive(t *testing.T) {
 	doc := `#define true 1
 #define name "CfgModule"

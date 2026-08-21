@@ -126,6 +126,16 @@ class_declaration
       Body: ast.Block($4),
     }
   }
+  | CLASS maybe_parent TOK_BLOCK_OPEN maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON INLINE_COMMENT {
+    $$ = ast.CommentedNode{
+      Node: ast.Class{
+        Identifier: $1,
+        Parent: $2,
+        Body: ast.Block($4),
+      },
+      Comment: ast.Comment($7),
+   }
+  }
   ;
 
 inline_comment

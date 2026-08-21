@@ -10,6 +10,22 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func Test_Parse_InlineComment_Assignment(t *testing.T) {
+	doc := `myVar = 420; // this is a comment`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node:    ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
 func Test_Parse_Exhaustive(t *testing.T) {
 	doc := `#define true 1
 #define name "CfgModule"

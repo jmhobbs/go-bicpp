@@ -55,3 +55,21 @@ func (lex *lexer) context(target, contextLines int) (before []string, line strin
 
 	return before, line, after
 }
+
+func (lex *lexer) commentIsInline() bool {
+	for i := lex.ts - 1; i >= 0; i-- {
+		switch lex.data[i] {
+		// whitespace we can skip
+		case ' ', '\t', '\r':
+			continue
+			// newline means we are the only thing on this line
+		case '\n':
+			return false
+		default:
+			// anything else should be part of another token
+			return true
+		}
+	}
+	// if we make it to the start of data, we are the first token
+	return false
+}

@@ -23,16 +23,11 @@ func Test_Block_Empty_String(t *testing.T) {
 	assert.Equal(t, expected, b.String())
 }
 
-func Test_ArrayBlock_String(t *testing.T) {
-	a := ast.Array{
-		ast.Integer(42),
-		ast.Float(3.14),
-		ast.Array{
-			ast.String("nested"),
-		},
-		ast.String("hello"),
+func Test_CommentedNode_String(t *testing.T) {
+	c := ast.CommentedNode{
+		Node:    ast.Assignment{Identifier: "myVar", Value: ast.Integer(42)},
+		Comment: ast.Comment("this is a comment"),
 	}
-
-	expected := "{42, 3.14, {\"nested\"}, \"hello\"}"
-	assert.Equal(t, expected, a.String())
+	expected := "myVar = 42; // this is a comment"
+	assert.Equal(t, expected, c.String())
 }

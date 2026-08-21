@@ -71,7 +71,14 @@ func (lex *lexer) Lex(out *yySymType) int {
             };
             '//'^'\n'* => {
               tok = TOK_COMMENT;
-              out.stringValue = string(lex.data[lex.ts+2:lex.te]);
+              if lex.te - lex.ts > 2 {
+                out.stringValue = string(lex.data[lex.ts+2:lex.te]);
+              } else {
+                out.stringValue = "";
+              }
+              if lex.commentIsInline() {
+                tok = TOK_INLINE_COMMENT;
+              }
               fbreak;
             };
             '=' => { tok = TOK_ASSIGN; fbreak; };

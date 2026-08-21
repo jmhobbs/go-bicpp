@@ -63,6 +63,103 @@ func Test_Parse_InlineComment_BlockClose(t *testing.T) {
 	)
 }
 
+func Test_Parse_InlineComment_Array_BeforeFirstValue(t *testing.T) {
+	doc := `arr[] = { // this is a comment
+		1,
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node: ast.Assignment{
+					Identifier: "arr",
+					Value:      ast.Integer(1),
+				},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_FirstValue(t *testing.T) {
+	doc := `arr[] = { 1, // this is a comment
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.CommentedNode{
+						Node:    ast.Integer(1),
+						Comment: ast.Comment(" this is a comment"),
+					},
+				},
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_MiddleValue(t *testing.T) {
+	doc := `arr[] = {
+		1,
+		2, // this is a comment
+		3,
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.Integer(1),
+					ast.CommentedNode{
+						Node:    ast.Integer(2),
+						Comment: ast.Comment(" this is a comment"),
+					},
+					ast.Integer(3),
+				},
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_LastValue(t *testing.T) {
+	doc := `arr[] = {
+		1,
+		2,
+		3, // this is a comment
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.Integer(1),
+					ast.Integer(2),
+					ast.CommentedNode{
+						Node:    ast.Integer(3),
+						Comment: ast.Comment(" this is a comment"),
+					},
+				},
+			},
+		},
+		f,
+	)
+}
+
 func Test_Parse_Exhaustive(t *testing.T) {
 	doc := `#define true 1
 #define name "CfgModule"

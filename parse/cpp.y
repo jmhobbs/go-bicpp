@@ -36,7 +36,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %type <node> declaration
 %type <nodes> declarations maybe_declarations
 
-%type <node> class_declaration, variable_declaration, array_declaration, comment_declaration
+%type <node> class_declaration, variable_declaration, comment_declaration, array_declaration
 
 %%
 
@@ -90,9 +90,6 @@ declaration
 define_macro
   : TOK_DEFINE IDENTIFIER literal {
     $$ = ast.Define{Identifier: $2, Value: $3}
-  }
-  | TOK_DEFINE IDENTIFIER array {
-    $$ = ast.Define{Identifier: $2, Value: ast.Array($3)}
   }
   ;
 
@@ -156,9 +153,9 @@ variable_declaration
   }
   ;
 
-array_declaration:
-  IDENTIFIER TOK_ARRAY TOK_ASSIGN array TOK_SEMICOLON {
-    $$ =  ast.Assignment{
+array_declaration
+  : IDENTIFIER TOK_ARRAY TOK_ASSIGN array TOK_SEMICOLON {
+    $$ = ast.Assignment{
       Identifier: $1,
       Value: ast.Array($4),
     }
@@ -184,6 +181,9 @@ literal
   | STRING {
     $$ = ast.String($1)
   }
+  | array {
+    $$ = ast.Array($1)
+  }
   ;
 
 array
@@ -199,14 +199,33 @@ array_values
   : literal {
     $$ = []ast.Node{$1}
   }
-  | array {
-    $$ = $1
+  | literal INLINE_COMMENT {
+    $$ = []ast.Node{
+      ast.CommentedNode{
+        Node: $1,
+        Comment: ast.Comment($2),
+      },
+    }
   }
   | array_values TOK_COMMA literal {
-    $$ = append($$, $3)
+    $$ = append($1, $3)
   }
-  | array_values TOK_COMMA array {
-    $$ = append($$, ast.Array($3))
+  | array_values TOK_COMMA literal INLINE_COMMENT {
+    $$ = append(
+      $1,
+      ast.CommentedNode{
+        Node: $3,
+        Comment: ast.Comment($4),
+      },
+    )
+  }
+  | array_values TOK_COMMA INLINE_COMMENT {
+    lastArrayValueIndex := len($1) - 1
+    $1[lastArrayValueIndex] = ast.CommentedNode{
+      Node: $1[lastArrayValueIndex],
+      Comment: ast.Comment($3),
+    }
+    $$ = $1
   }
   ;
 

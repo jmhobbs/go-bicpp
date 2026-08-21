@@ -14,3 +14,13 @@ func (b Block) String() string {
 	}
 	return strings.Join(lines, "\n")
 }
+
+// CommentedNode is a Node with a Comment trailer.
+type CommentedNode struct {
+	Node    Node
+	Comment Comment
+}
+
+func (c CommentedNode) String() string {
+	return c.Node.String() + " " + c.Comment.String()
+}

@@ -10,6 +10,156 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func Test_Parse_InlineComment_Assignment(t *testing.T) {
+	doc := `myVar = 420; // this is a comment`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node:    ast.Assignment{Identifier: "myVar", Value: ast.Integer(420)},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_BlockOpen(t *testing.T) {
+	doc := `class CfgModule { // this is a comment
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Class{
+				Identifier: "CfgModule",
+				Body: ast.CommentedNode{
+					Node:    ast.Block{},
+					Comment: ast.Comment(" this is a comment"),
+				},
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_BlockClose(t *testing.T) {
+	doc := `class CfgModule {
+}; // this is a comment`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node:    ast.Class{Identifier: "CfgModule", Body: ast.Block{}},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_BeforeFirstValue(t *testing.T) {
+	doc := `arr[] = { // this is a comment
+		1,
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.CommentedNode{
+				Node: ast.Assignment{
+					Identifier: "arr",
+					Value:      ast.Integer(1),
+				},
+				Comment: ast.Comment(" this is a comment"),
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_FirstValue(t *testing.T) {
+	doc := `arr[] = { 1, // this is a comment
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.CommentedNode{
+						Node:    ast.Integer(1),
+						Comment: ast.Comment(" this is a comment"),
+					},
+				},
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_MiddleValue(t *testing.T) {
+	doc := `arr[] = {
+		1,
+		2, // this is a comment
+		3,
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.Integer(1),
+					ast.CommentedNode{
+						Node:    ast.Integer(2),
+						Comment: ast.Comment(" this is a comment"),
+					},
+					ast.Integer(3),
+				},
+			},
+		},
+		f,
+	)
+}
+
+func Test_Parse_InlineComment_Array_LastValue(t *testing.T) {
+	doc := `arr[] = {
+		1,
+		2,
+		3, // this is a comment
+};`
+	f, err := parse.Parse([]byte(doc), true)
+	require.NoError(t, err)
+	assert.Equal(
+		t,
+		ast.File{
+			ast.Assignment{
+				Identifier: "arr",
+				Value: ast.Array{
+					ast.Integer(1),
+					ast.Integer(2),
+					ast.CommentedNode{
+						Node:    ast.Integer(3),
+						Comment: ast.Comment(" this is a comment"),
+					},
+				},
+			},
+		},
+		f,
+	)
+}
+
 func Test_Parse_Exhaustive(t *testing.T) {
 	doc := `#define true 1
 #define name "CfgModule"
@@ -32,6 +182,19 @@ class CfgAnother {
 		scope = 2;
 	};
 };
+
+inlineComment = "what do you do now?"; // this is a problem
+
+arrComment[] = {
+	1, // noted
+	2,
+	3
+};
+
+class CfgComment // this is weird
+{ // this is weird too
+	// a regular comment
+}; // I guess you can do this, I can't stop you
 `
 
 	f, err := parse.Parse([]byte(doc), true)

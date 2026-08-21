@@ -164,12 +164,12 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr15:
-//line lex.rl:83
+//line lex.rl:90
 		lex.te = (lex.p) + 1
 
 		goto st12
 	tr17:
-//line lex.rl:78
+//line lex.rl:85
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_COMMA
@@ -181,7 +181,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr20:
-//line lex.rl:81
+//line lex.rl:88
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_COLON
@@ -193,7 +193,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr21:
-//line lex.rl:82
+//line lex.rl:89
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_SEMICOLON
@@ -205,7 +205,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr22:
-//line lex.rl:77
+//line lex.rl:84
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_ASSIGN
@@ -217,7 +217,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr26:
-//line lex.rl:79
+//line lex.rl:86
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_BLOCK_OPEN
@@ -229,7 +229,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 		goto st12
 	tr27:
-//line lex.rl:80
+//line lex.rl:87
 		lex.te = (lex.p) + 1
 		{
 			tok = TOK_BLOCK_CLOSE
@@ -245,8 +245,15 @@ func (lex *lexer) Lex(out *yySymType) int {
 		lex.te = (lex.p)
 		(lex.p)--
 		{
-			tok = TOK_COMMENT
-			out.stringValue = string(lex.data[lex.ts+2 : lex.te])
+			tok = COMMENT
+			if lex.te-lex.ts > 2 {
+				out.stringValue = string(lex.data[lex.ts+2 : lex.te])
+			} else {
+				out.stringValue = ""
+			}
+			if lex.commentIsInline() {
+				tok = INLINE_COMMENT
+			}
 			{
 				(lex.p)++
 				lex.cs = 12
@@ -329,7 +336,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 //line NONE:1
 		lex.ts = (lex.p)
 
-//line lex.go:251
+//line lex.go:258
 		switch lex.data[(lex.p)] {
 		case 32:
 			goto tr15
@@ -469,7 +476,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 			goto _test_eof14
 		}
 	st_case_14:
-//line lex.go:391
+//line lex.go:398
 		if lex.data[(lex.p)] == 46 {
 			goto st9
 		}
@@ -596,7 +603,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 			goto _test_eof21
 		}
 	st_case_21:
-//line lex.go:518
+//line lex.go:525
 		if lex.data[(lex.p)] == 32 {
 			goto st11
 		}
@@ -750,7 +757,7 @@ func (lex *lexer) Lex(out *yySymType) int {
 		}
 	}
 
-//line lex.rl:87
+//line lex.rl:94
 
 	return tok
 }

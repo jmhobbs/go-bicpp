@@ -5,7 +5,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %}
 
 %token CLASS IDENTIFIER INTEGER FLOAT STRING
-%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON TOK_DEFINE TOK_COMMENT
+%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON TOK_DEFINE COMMENT INLINE_COMMENT
 
 %union{
   identifier string
@@ -21,20 +21,22 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %token <identifier> CLASS
 %token <identifier> IDENTIFIER
 
-%token <stringValue> STRING TOK_COMMENT
+%token <stringValue> STRING COMMENT INLINE_COMMENT
 %token <integerValue> INTEGER
 %token <floatValue> FLOAT
 
-%type <node> literal
+%type <identifier> maybe_parent
+
+%type <node> literal inline_comment
 %type <nodes> array_values array
 
 %type <node> define_macro
 %type <nodes> directives
 
 %type <node> declaration
-%type <nodes> declarations
+%type <nodes> declarations maybe_declarations
 
-%type <node> class_declaration, variable_declaration, array_declaration, comment_declaration
+%type <node> class_declaration, variable_declaration, comment_declaration, array_declaration
 
 %%
 
@@ -68,19 +70,35 @@ declarations
   }
   ;
 
+maybe_declarations
+  : declarations {
+    $$ = $1
+  }
+  | {
+    $$ = []ast.Node{}
+  }
+  ;
+
 declaration
   : class_declaration
   | variable_declaration
   | array_declaration
   | comment_declaration
+  | inline_comment
   ;
 
 define_macro
   : TOK_DEFINE IDENTIFIER literal {
     $$ = ast.Define{Identifier: $2, Value: $3}
   }
-  | TOK_DEFINE IDENTIFIER array {
-    $$ = ast.Define{Identifier: $2, Value: ast.Array($3)}
+  ;
+
+maybe_parent
+  : TOK_COLON IDENTIFIER {
+    $$ = $2
+  }
+  | {
+    $$ = ""
   }
   ;
 
@@ -88,30 +106,40 @@ class_declaration
   : CLASS TOK_SEMICOLON {
     $$ = ast.Class{Identifier: $1}
   }
-  | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
+  | CLASS maybe_parent TOK_BLOCK_OPEN INLINE_COMMENT maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
     $$ = ast.Class{
       Identifier: $1,
-      Parent: $3,
-      Body: ast.Block($5),
+      Parent: $2,
+      Body: ast.CommentedNode{
+        Node: ast.Block($5),
+        Comment: ast.Comment($4),
+      },
     }
   }
-  | CLASS TOK_COLON IDENTIFIER TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
+  | CLASS maybe_parent TOK_BLOCK_OPEN maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
     $$ = ast.Class{
       Identifier: $1,
-      Parent: $3,
-      Body: ast.Block{},
+      Parent: $2,
+      Body: ast.Block($4),
     }
   }
-  | CLASS TOK_BLOCK_OPEN declarations TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.Class{
-      Identifier: $1,
-      Body: ast.Block($3),
-    }
+  | CLASS maybe_parent TOK_BLOCK_OPEN maybe_declarations TOK_BLOCK_CLOSE TOK_SEMICOLON INLINE_COMMENT {
+    $$ = ast.CommentedNode{
+      Node: ast.Class{
+        Identifier: $1,
+        Parent: $2,
+        Body: ast.Block($4),
+      },
+      Comment: ast.Comment($7),
+   }
   }
-  | CLASS TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON {
-    $$ = ast.Class{
-      Identifier: $1,
-      Body: ast.Block{},
+  ;
+
+inline_comment
+  : variable_declaration INLINE_COMMENT {
+    $$ = ast.CommentedNode{
+      Node: $1,
+      Comment: ast.Comment($2),
     }
   }
   ;
@@ -125,9 +153,9 @@ variable_declaration
   }
   ;
 
-array_declaration:
-  IDENTIFIER TOK_ARRAY TOK_ASSIGN array TOK_SEMICOLON {
-    $$ =  ast.Assignment{
+array_declaration
+  : IDENTIFIER TOK_ARRAY TOK_ASSIGN array TOK_SEMICOLON {
+    $$ = ast.Assignment{
       Identifier: $1,
       Value: ast.Array($4),
     }
@@ -135,7 +163,7 @@ array_declaration:
   ;
 
 comment_declaration
-  : TOK_COMMENT {
+  : COMMENT {
     $$ = ast.Comment($1)
   }
   ;
@@ -153,6 +181,9 @@ literal
   | STRING {
     $$ = ast.String($1)
   }
+  | array {
+    $$ = ast.Array($1)
+  }
   ;
 
 array
@@ -168,14 +199,33 @@ array_values
   : literal {
     $$ = []ast.Node{$1}
   }
-  | array {
-    $$ = $1
+  | literal INLINE_COMMENT {
+    $$ = []ast.Node{
+      ast.CommentedNode{
+        Node: $1,
+        Comment: ast.Comment($2),
+      },
+    }
   }
   | array_values TOK_COMMA literal {
-    $$ = append($$, $3)
+    $$ = append($1, $3)
   }
-  | array_values TOK_COMMA array {
-    $$ = append($$, ast.Array($3))
+  | array_values TOK_COMMA literal INLINE_COMMENT {
+    $$ = append(
+      $1,
+      ast.CommentedNode{
+        Node: $3,
+        Comment: ast.Comment($4),
+      },
+    )
+  }
+  | array_values TOK_COMMA INLINE_COMMENT {
+    lastArrayValueIndex := len($1) - 1
+    $1[lastArrayValueIndex] = ast.CommentedNode{
+      Node: $1[lastArrayValueIndex],
+      Comment: ast.Comment($3),
+    }
+    $$ = $1
   }
   ;
 

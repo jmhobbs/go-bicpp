@@ -23,7 +23,7 @@ func (d Assignment) String() string {
 type Class struct {
 	Identifier string
 	Parent     string
-	Body       Block
+	Body       Node
 }
 
 // IsForwardClassDeclaration returns true if the class is a forward declaration with no body.

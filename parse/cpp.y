@@ -5,7 +5,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %}
 
 %token CLASS IDENTIFIER INTEGER FLOAT STRING
-%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON TOK_DEFINE TOK_COMMENT TOK_INLINE_COMMENT
+%token TOK_ARRAY TOK_BLOCK_OPEN TOK_BLOCK_CLOSE TOK_SEMICOLON TOK_ASSIGN TOK_QUOTE TOK_COMMA TOK_COLON TOK_DEFINE COMMENT INLINE_COMMENT
 
 %union{
   identifier string
@@ -21,7 +21,7 @@ import "github.com/jmhobbs/go-bicpp/ast"
 %token <identifier> CLASS
 %token <identifier> IDENTIFIER
 
-%token <stringValue> STRING TOK_COMMENT TOK_INLINE_COMMENT
+%token <stringValue> STRING COMMENT INLINE_COMMENT
 %token <integerValue> INTEGER
 %token <floatValue> FLOAT
 
@@ -118,7 +118,7 @@ class_declaration
   ;
 
 inline_comment
-  : variable_declaration TOK_INLINE_COMMENT {
+  : variable_declaration INLINE_COMMENT {
     $$ = ast.CommentedNode{
       Node: $1,
       Comment: ast.Comment($2),
@@ -145,7 +145,7 @@ array_declaration:
   ;
 
 comment_declaration
-  : TOK_COMMENT {
+  : COMMENT {
     $$ = ast.Comment($1)
   }
   ;

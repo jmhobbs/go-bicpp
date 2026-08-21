@@ -36,8 +36,8 @@ const TOK_QUOTE = 57356
 const TOK_COMMA = 57357
 const TOK_COLON = 57358
 const TOK_DEFINE = 57359
-const TOK_COMMENT = 57360
-const TOK_INLINE_COMMENT = 57361
+const COMMENT = 57360
+const INLINE_COMMENT = 57361
 
 var yyToknames = [...]string{
 	"$end",
@@ -57,8 +57,8 @@ var yyToknames = [...]string{
 	"TOK_COMMA",
 	"TOK_COLON",
 	"TOK_DEFINE",
-	"TOK_COMMENT",
-	"TOK_INLINE_COMMENT",
+	"COMMENT",
+	"INLINE_COMMENT",
 }
 
 var yyStatenames = [...]string{}

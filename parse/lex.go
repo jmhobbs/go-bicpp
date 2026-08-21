@@ -245,14 +245,14 @@ func (lex *lexer) Lex(out *yySymType) int {
 		lex.te = (lex.p)
 		(lex.p)--
 		{
-			tok = TOK_COMMENT
+			tok = COMMENT
 			if lex.te-lex.ts > 2 {
 				out.stringValue = string(lex.data[lex.ts+2 : lex.te])
 			} else {
 				out.stringValue = ""
 			}
 			if lex.commentIsInline() {
-				tok = TOK_INLINE_COMMENT
+				tok = INLINE_COMMENT
 			}
 			{
 				(lex.p)++
